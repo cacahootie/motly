@@ -4,6 +4,7 @@ var path = require('path');
 
 var express = require('express');
 var github = require("github-api");
+var morgan = require("morgan");
 var nunjucks = require("nunjucks");
 
 var getters = require('./getters')
@@ -79,7 +80,8 @@ if (env.github) {
 app.use(function(err, req, res, next) {
     console.error(err.stack);
     res.status(500).send('Something broke!');
-});
+})
+app.use(morgan('combined'))
 
 exports.app = app;
 
