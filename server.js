@@ -15,8 +15,6 @@ if (process.env.GITHUB || process.env.GH_REPO) {
 }
 
 var app = express();
-var router = express.Router();
-app.use("/", router);
 
 nunjucks.configure({
     autoescape: true
@@ -36,7 +34,7 @@ var RenderData = function(repo, context, res) {
     });
 }
 
-var MakeRoute = function(config, repo, route) {
+var MakeRoute = function(config, repo, route, router) {
     router.get(route, function(req, res) {
         GetData(config[route].context, function(e, d) {
             RenderData(repo, d.body, res)
@@ -45,15 +43,20 @@ var MakeRoute = function(config, repo, route) {
 }
 
 var RoutesFromConfig = function(repo, config) {
+    var router = express.Router()
+    if (env.local || process.env.GH_REPO) {
+        app.use("/", router)
+    }
+    app.use("/" + repo, router);
     for (var route in config) {
         if (!config.hasOwnProperty(route)) continue;
-        MakeRoute(config, repo, route)
+        MakeRoute(config, repo, route, router)
     }
 }
 
 var RoutesFromRepo = function(user, repo) {
-    console.log(repo);
-    repo = git.getRepo(user, repo);
+    console.log("Initializing routes from repo: ");
+    var repo = git.getRepo(user, repo);
     GetGithubSource(repo, 'config.json', function(e, d) {
         RoutesFromConfig(repo, d);
     });
