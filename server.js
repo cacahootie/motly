@@ -10,7 +10,7 @@ var request = require('superagent');
 var basefolder = path.join(__dirname, 'demo');
 
 var env = {'local': true}
-if (process.env.GITHUB) {
+if (process.env.GITHUB || process.env.GH_REPO) {
     var git = new github();
     env = {'github':true}
 }
@@ -64,17 +64,22 @@ var RoutesFromConfig = function(repo, config) {
     }
 }
 
+var RoutesFromRepo = function(user, repo) {
+    console.log(repo);
+    repo = git.getRepo(user, repo);
+    GetGithubSource(repo, 'config.json', function(e, d) {
+        RoutesFromConfig(repo, d);
+    });
+}
+
 if (env.github) {
-    whitelist.forEach(function(d) {
-        console.log(d.repository)
-        var repo = false;
-        if (env.github) {
-            repo = git.getRepo(d.username, d.repository);
-        }
-        GetGithubSource(repo, 'config.json', function(e, d) {
-            RoutesFromConfig(repo, d);
-        });
-    })
+    if (process.env.GH_REPO && process.env.GH_USER) {
+        RoutesFromRepo(process.env.GH_USER, process.env.GH_REPO);
+    } else if (whitelist.length > 0) {
+        whitelist.forEach(function(d) {
+            RoutesFromRepo(d.username, d.repository);
+        })
+    }
 } else {
     var config = get_local_json('config.json');
     RoutesFromConfig(false, config);
