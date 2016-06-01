@@ -1,0 +1,16 @@
+{
+  "restartable": "rs",
+  "ignore": [
+    ".git",
+    "node_modules/**/node_modules"
+  ],
+  "verbose": true,
+  "watch": [
+    "nodemon.json",
+    "*.js",
+    "demo/"
+  ],
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

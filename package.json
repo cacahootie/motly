@@ -23,6 +23,7 @@
   "homepage": "https://github.com/cacahootie/motly",
   "dependencies": {
     "express": "^4.13.4",
-    "nunjucks": "^2.4.2"
+    "nunjucks": "^2.4.2",
+    "superagent": "^2.0.0"
   }
 }
