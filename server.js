@@ -26,8 +26,6 @@ var get_local_json = getters.get_local_json
 var GetTemplateSource = getters.GetTemplateSource
 var GetData = getters.GetData
 
-var whitelist = get_local_json('whitelist.json');
-
 
 var RenderData = function(repo, context, res) {
     GetTemplateSource(repo, "index.html", function (e, d){
@@ -67,13 +65,12 @@ var RoutesFromRepo = function(user, repo) {
 }
 
 if (env.github) {
-    if (process.env.GH_REPO && process.env.GH_USER) {
-        RoutesFromRepo(process.env.GH_USER, process.env.GH_REPO);
-    } else if (whitelist.length > 0) {
+    var repo = git.getRepo(process.env.GH_USER, process.env.GH_REPO)
+    GetTemplateSource(repo, "whitelist.json", function (e, whitelist) {
         whitelist.forEach(function(d) {
             RoutesFromRepo(d.username, d.repository);
         })
-    }
+    })
 } else {
     console.log("\nInitializing routes from local\n");
     var config = get_local_json('config.json');
