@@ -5,9 +5,8 @@ var path = require('path');
 var express = require('express');
 var github = require("github-api");
 var nunjucks = require("nunjucks");
-var request = require('superagent');
 
-var basefolder = path.join(__dirname, 'demo');
+var getters = require('./getters')
 
 var env = {'local': true}
 if (process.env.GITHUB || process.env.GH_REPO) {
@@ -23,25 +22,13 @@ nunjucks.configure({
     autoescape: true
 });
 
-var get_local_json = function(fname) {
-    return JSON.parse(fs.readFileSync(path.join(basefolder, '../../motly-test', fname)).toString())
-}
+getters = getters.getter_environment(env)
+var get_local_json = getters.get_local_json
+var GetGithubSource = getters.GetGithubSource
+var GetData = getters.GetData
 
 var whitelist = get_local_json('whitelist.json');
 
-var GetData = function(robj, cb) {
-    request
-      .get(robj.url)
-      .end(cb);
-}
-
-var GetGithubSource = function(repo, fname, cb) {
-    if (env.github) {
-        return repo.getContents('master', fname, 'raw', cb)
-    } else if (env.local) {
-        return fs.readFile(path.join(basefolder, '../../motly-test/' + fname), cb);    
-    }
-}
 
 var RenderData = function(repo, context, res) {
     GetGithubSource(repo, "index.html", function (e, d){
