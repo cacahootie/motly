@@ -22,19 +22,20 @@ nunjucks.configure({
 
 getters = getters.getter_environment(env)
 var get_local_json = getters.get_local_json
-var GetGithubSource = getters.GetGithubSource
+var GetTemplateSource = getters.GetTemplateSource
 var GetData = getters.GetData
 
 var whitelist = get_local_json('whitelist.json');
 
 
 var RenderData = function(repo, context, res) {
-    GetGithubSource(repo, "index.html", function (e, d){
-        res.end(nunjucks.renderString(d.toString(), context));
+    GetTemplateSource(repo, "index.html", function (e, d){
+        res.end(nunjucks.renderString(d.toString(), context))
     });
 }
 
 var MakeRoute = function(config, repo, route, router) {
+    console.log("Initializing route: " + route)
     router.get(route, function(req, res) {
         GetData(config[route].context, function(e, d) {
             RenderData(repo, d.body, res)
@@ -49,15 +50,15 @@ var RoutesFromConfig = function(repo, config) {
     }
     app.use("/" + repo, router);
     for (var route in config) {
-        if (!config.hasOwnProperty(route)) continue;
+        if (!config.hasOwnProperty(route)) continue
         MakeRoute(config, repo, route, router)
     }
 }
 
 var RoutesFromRepo = function(user, repo) {
-    console.log("Initializing routes from repo: ");
+    console.log("Initializing routes from repo: " + repo);
     var repo = git.getRepo(user, repo);
-    GetGithubSource(repo, 'config.json', function(e, d) {
+    GetTemplateSource(repo, 'config.json', function(e, d) {
         RoutesFromConfig(repo, d);
     });
 }

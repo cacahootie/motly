@@ -19,7 +19,7 @@ exports.getter_environment = function (env) {
         return JSON.parse(fs.readFileSync(path.join(basefolder, '../motly-test', fname)).toString())
     }
 
-    self.GetGithubSource = function(repo, fname, cb) {
+    self.GetTemplateSource = function(repo, fname, cb) {
         if (env.github) {
             return repo.getContents('master', fname, 'raw', cb)
         } else if (env.local) {
