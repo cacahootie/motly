@@ -9,8 +9,11 @@ var request = require('superagent');
 
 var basefolder = path.join(__dirname, 'demo');
 
-var git = new github();
-var repo = git.getRepo('cacahootie', 'motly');
+var env = {'local': true}
+if (process.env.GITHUB) {
+    var git = new github();
+    env = {'github':true}
+}
 
 var app = express();
 var router = express.Router();
@@ -20,11 +23,11 @@ nunjucks.configure({
     autoescape: true
 });
 
-var get_config = function(fname) {
-    return JSON.parse(fs.readFileSync(path.join(basefolder, fname)).toString())
+var get_local_json = function(fname) {
+    return JSON.parse(fs.readFileSync(path.join(basefolder, '../../motly-test', fname)).toString())
 }
 
-var config = get_config('config.json');
+var whitelist = get_local_json('whitelist.json');
 
 var GetData = function(robj, cb) {
     request
@@ -32,31 +35,49 @@ var GetData = function(robj, cb) {
       .end(cb);
 }
 
-var GetTemplate = function(env, fname, cb) {
+var GetGithubSource = function(repo, fname, cb) {
     if (env.github) {
-        return repo.getContents('master', 'demo/index.html', 'raw', cb)
+        return repo.getContents('master', fname, 'raw', cb)
     } else if (env.local) {
-        return fs.readFile(path.join(basefolder, 'index.html'), cb);    
+        return fs.readFile(path.join(basefolder, '../../motly-test/' + fname), cb);    
     }
 }
 
-var RenderData = function(context, res) {
-    GetTemplate({"github":true}, "demo/index.html", function (e, d){
+var RenderData = function(repo, context, res) {
+    GetGithubSource(repo, "index.html", function (e, d){
         res.end(nunjucks.renderString(d.toString(), context));
     });
 }
 
-var MakeRoute = function(route) {
+var MakeRoute = function(config, repo, route) {
     router.get(route, function(req, res) {
         GetData(config[route].context, function(e, d) {
-            RenderData(d.body, res)
+            RenderData(repo, d.body, res)
         });
     });
 }
 
-for (var route in config) {
-    if (!config.hasOwnProperty(route)) continue;
-    MakeRoute(route)
+var RoutesFromConfig = function(repo, config) {
+    for (var route in config) {
+        if (!config.hasOwnProperty(route)) continue;
+        MakeRoute(config, repo, route)
+    }
+}
+
+if (env.github) {
+    whitelist.forEach(function(d) {
+        console.log(d.repository)
+        var repo = false;
+        if (env.github) {
+            repo = git.getRepo(d.username, d.repository);
+        }
+        GetGithubSource(repo, 'config.json', function(e, d) {
+            RoutesFromConfig(repo, d);
+        });
+    })
+} else {
+    var config = get_local_json('config.json');
+    RoutesFromConfig(false, config);
 }
 
 app.use(function(err, req, res, next) {

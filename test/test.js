@@ -4,16 +4,11 @@ var request = require('supertest');
 var motly = require('../server');
 var app = motly.app;
 
-describe('GET /city', function() {
+describe('GET /cities', function() {
   it('respond with text', function(done) {
     request(app)
-      .get('/city')
+      .get('/cities')
       .set('Accept', 'application/json')
-      .expect(function(res) {
-        if (!res.text.indexOf('Haag') || !res.text.indexOf('Oruro')) {
-            throw new Error("Expected to find Haag and Oruro in cities")
-        }
-      })
       .expect(200, done);
   });
 });
