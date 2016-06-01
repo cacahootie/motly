@@ -36,7 +36,6 @@ var RenderData = function(repo, context, res) {
 }
 
 var MakeRoute = function(config, repo, route, router) {
-    console.log("Initializing route: " + route)
     router.get(route, function(req, res) {
         GetData(config[route].context, function(e, d) {
             RenderData(repo, d.body, res)
@@ -44,23 +43,26 @@ var MakeRoute = function(config, repo, route, router) {
     });
 }
 
-var RoutesFromConfig = function(repo, config) {
+var RoutesFromConfig = function(repo, prefix, config) {
     var router = express.Router()
     if (env.local || process.env.GH_REPO) {
         app.use("/", router)
     }
-    app.use("/" + repo, router);
+    app.use("/" + prefix, router);
     for (var route in config) {
         if (!config.hasOwnProperty(route)) continue
+        console.log("Initializing route: /" + prefix + route)
+        console.log("Route context from: " + config[route].context.url + "\n")
         MakeRoute(config, repo, route, router)
     }
 }
 
 var RoutesFromRepo = function(user, repo) {
-    console.log("Initializing routes from repo: " + repo);
-    var repo = git.getRepo(user, repo);
-    GetTemplateSource(repo, 'config.json', function(e, d) {
-        RoutesFromConfig(repo, d);
+    console.log("\nInitializing routes from repo: " + repo + "\n");
+    var prefix = repo,
+        gh_repo = git.getRepo(user, repo);
+    GetTemplateSource(gh_repo, 'config.json', function(e, d) {
+        RoutesFromConfig(gh_repo, prefix, d);
     });
 }
 
@@ -73,13 +75,14 @@ if (env.github) {
         })
     }
 } else {
+    console.log("\nInitializing routes from local\n");
     var config = get_local_json('config.json');
-    RoutesFromConfig(false, config);
+    RoutesFromConfig(false, false, config);
 }
 
 app.use(function(err, req, res, next) {
     console.error(err.stack);
-    res.status(500).send('Something broke!');
+    res.status(500).send('Something broke!')
 })
 app.use(morgan('combined'))
 
@@ -87,15 +90,9 @@ exports.app = app;
 
 var main = function(){
     var port = process.env.PORT || 8000;
-    return app.listen(port, '0.0.0.0', function(err) {
-        if (!err) {
-            if (!process.env.TESTING) {
-                console.log("Listening on port: " + port);
-            }
-        } else {
-            process.exit(0);
-        }
-    });
+    app.listen(port, '0.0.0.0', function(e) {
+        console.log("Running motly on port: " + port)
+    })
 }
 
 if (require.main === module) {
