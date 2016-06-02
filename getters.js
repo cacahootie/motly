@@ -26,7 +26,7 @@ exports.GetContextData = function(robj, cb) {
       .end(cb)
 }
 
-exports.getter_environment = function (env) {
+exports.NewEngine = function (env) {
     var self = {};
 
     self.GetTemplateSource = function(repo, fname, cb) {

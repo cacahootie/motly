@@ -20,7 +20,7 @@ if (process.env.GITHUB || process.env.GH_REPO) {
 
 var app = express();
 
-env.getters = getters.getter_environment(env)
+env.getters = getters.NewEngine(env)
 var GetTemplateSource = env.getters.GetTemplateSource
 var RenderData = env.getters.RenderData
 var MakeRoute = env.getters.MakeRoute
