@@ -2,7 +2,6 @@
 var fs = require('fs')
 var path = require('path')
 
-var github = require("github-api");
 var request = require('superagent')
 
 var basefolder = path.join(__dirname)
