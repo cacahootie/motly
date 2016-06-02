@@ -1,10 +1,7 @@
 
 var express = require('express')
-var github = require("github-api")
 
 var getters = require('./getters')
-
-var git = new github({token: getters.get_local_text('.github_token')});
 
 exports.NewProcessor = function(app, env) {
     
@@ -31,6 +28,22 @@ exports.NewProcessor = function(app, env) {
         env.templater.GetTemplateSource(gh_repo, 'config.json', function(e, d) {
             self.RoutesFromConfig(gh_repo, prefix, d)
         });
+    }
+
+    self.Routes = function () {
+        if (env.github) {
+            var whitelist_repo = env.git.getRepo(process.env.GH_USER, process.env.GH_REPO)
+            env.templater.GetTemplateSource(whitelist_repo, "whitelist.json", function (e, whitelist) {
+                if (e) console.log(e)
+                whitelist.forEach(function(d) {
+                    self.RoutesFromRepo(d.username, d.repository);
+                })
+            })
+        } else {
+            console.log("\nInitializing routes from local\n")
+            var config = getters.get_local_json('config.json')
+            self.RoutesFromConfig(false, false, config)
+        }
     }
 
     return self
