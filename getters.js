@@ -22,11 +22,7 @@ exports.get_local_json = function(fname) {
 
 exports.getter_environment = function (env) {
     var self = {};
-    
-    if (env.github) {
-        self.git = new github()
-    }
-    
+
     self.GetTemplateSource = function(repo, fname, cb) {
         if (env.github) {
             console.log("Getting: " + fname) 
