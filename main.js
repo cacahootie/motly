@@ -10,6 +10,7 @@ var morgan = require("morgan");
 var getters = require('./getters')
 var get_local_text = getters.get_local_text
 var get_local_json = getters.get_local_json
+var GetContextData = getters.GetContextData
 
 var env = {'local': true}
 if (process.env.GITHUB || process.env.GH_REPO) {
@@ -21,13 +22,13 @@ var app = express();
 
 var genv = getters.getter_environment(env)
 var GetTemplateSource = genv.GetTemplateSource
-var GetData = genv.GetData
+
 var RenderData = genv.RenderData
 
 
 var MakeRoute = function(config, repo, route, router) {
     router.get(route, function(req, res) {
-        GetData(config[route].context, function(e, d) {
+        GetContextData(config[route].context, function(e, d) {
             RenderData(repo, d.body, res)
         });
     });
@@ -57,9 +58,9 @@ var RoutesFromRepo = function(user, repo) {
 }
 
 if (env.github) {
-    var repo = git.getRepo(process.env.GH_USER, process.env.GH_REPO)
-    GetTemplateSource(repo, "whitelist.json", function (e, whitelist) {
-        console.log(e)
+    var whitelist_repo = git.getRepo(process.env.GH_USER, process.env.GH_REPO)
+    GetTemplateSource(whitelist_repo, "whitelist.json", function (e, whitelist) {
+        if (e) console.log(e)
         whitelist.forEach(function(d) {
             RoutesFromRepo(d.username, d.repository);
         })

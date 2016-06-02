@@ -20,6 +20,12 @@ exports.get_local_json = function(fname) {
     return JSON.parse(fs.readFileSync(path.join(basefolder, '../motly-test', fname)).toString())
 }
 
+exports.GetContextData = function(robj, cb) {
+    request
+      .get(robj.url)
+      .end(cb)
+}
+
 exports.getter_environment = function (env) {
     var self = {};
 
@@ -30,12 +36,6 @@ exports.getter_environment = function (env) {
         } else if (env.local) {
             return fs.readFile(path.join(basefolder, '../motly-test/' + fname), cb)
         }
-    }
-
-    self.GetData = function(robj, cb) {
-        request
-          .get(robj.url)
-          .end(cb)
     }
 
     self.RenderData = function(repo, context, res) {
