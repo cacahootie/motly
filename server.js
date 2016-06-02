@@ -87,7 +87,7 @@ exports.app = app;
 
 var main = function(){
     var port = process.env.PORT || 8000;
-    app.listen(port, '0.0.0.0', function(e) {
+    app.listen(port, '127.0.0.1', function(e) {
         console.log("Running motly on port: " + port)
     })
 }
