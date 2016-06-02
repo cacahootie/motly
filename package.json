@@ -2,7 +2,7 @@
   "name": "motly",
   "version": "1.0.0",
   "description": "nunjucks template microservice",
-  "main": "server.js",
+  "main": "main.js",
   "scripts": {
     "test": "test.js"
   },

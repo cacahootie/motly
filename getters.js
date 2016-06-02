@@ -3,13 +3,18 @@ var fs = require('fs')
 var path = require('path')
 
 var github = require("github-api");
+var nunjucks = require("nunjucks");
 var request = require('superagent')
 
 var basefolder = path.join(__dirname)
 
+nunjucks.configure({
+    autoescape: true
+});
+
 exports.get_local_text = function(fname) {
-        return fs.readFileSync(fname).toString()
-    }
+    return fs.readFileSync(fname).toString()
+}
 
 exports.getter_environment = function (env) {
     var self = {};
@@ -35,6 +40,12 @@ exports.getter_environment = function (env) {
         request
           .get(robj.url)
           .end(cb)
+    }
+
+    self.RenderData = function(repo, context, res) {
+        self.GetTemplateSource(repo, "index.html", function (e, d){
+            res.end(nunjucks.renderString(d.toString(), context))
+        });
     }
 
     return self;

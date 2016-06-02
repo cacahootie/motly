@@ -5,7 +5,7 @@ var path = require('path');
 var express = require('express');
 var github = require("github-api");
 var morgan = require("morgan");
-var nunjucks = require("nunjucks");
+
 
 var getters = require('./getters')
 var get_local_text = getters.get_local_text
@@ -18,22 +18,12 @@ if (process.env.GITHUB || process.env.GH_REPO) {
 
 var app = express();
 
-nunjucks.configure({
-    autoescape: true
-});
-
-
 getters = getters.getter_environment(env)
 var get_local_json = getters.get_local_json
 var GetTemplateSource = getters.GetTemplateSource
 var GetData = getters.GetData
+var RenderData = getters.RenderData
 
-
-var RenderData = function(repo, context, res) {
-    GetTemplateSource(repo, "index.html", function (e, d){
-        res.end(nunjucks.renderString(d.toString(), context))
-    });
-}
 
 var MakeRoute = function(config, repo, route, router) {
     router.get(route, function(req, res) {
@@ -45,7 +35,7 @@ var MakeRoute = function(config, repo, route, router) {
 
 var RoutesFromConfig = function(repo, prefix, config) {
     var router = express.Router()
-    if (env.local || process.env.GH_REPO) {
+    if (env.local) {
         app.use("/", router)
     }
     app.use("/" + prefix, router);
