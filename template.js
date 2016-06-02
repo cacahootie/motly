@@ -34,7 +34,7 @@ exports.NewEngine = function (env) {
 
     self.MakeRoute = function(config, repo, route, router) {
         router.get(route, function(req, res) {
-            getters.GetContextData(config[route].context, function(e, d) {
+            getters.get_context_data(config[route].context, function(e, d) {
                 self.RenderData(repo, d.body, res)
             })
         })

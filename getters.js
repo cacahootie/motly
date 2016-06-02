@@ -14,7 +14,7 @@ exports.get_local_json = function(fname) {
     return JSON.parse(fs.readFileSync(path.join(basefolder, '../motly-test', fname)).toString())
 }
 
-exports.GetContextData = function(robj, cb) {
+exports.get_context_data = function(robj, cb) {
     request
       .get(robj.url)
       .end(cb)
