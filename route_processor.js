@@ -3,9 +3,9 @@ var express = require('express')
 
 var getters = require('./getters')
 
-exports.NewProcessor = function(app, env) {
-    
-    var self = {}
+exports.NewProcessor = function(app) {
+    var self = {},
+        env = app.env
 
     self.RoutesFromConfig = function(repo, prefix, config) {
         var router = express.Router()

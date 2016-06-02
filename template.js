@@ -14,8 +14,9 @@ nunjucks.configure({
     autoescape: true
 })
 
-exports.NewEngine = function (env) {
-    var self = {};
+exports.NewEngine = function (app) {
+    var self = {},
+        env = app.env
 
     self.GetTemplateSource = function(repo, fname, cb) {
         if (env.github) {
