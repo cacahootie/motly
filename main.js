@@ -9,52 +9,32 @@ var morgan = require("morgan");
 var getters = require('./getters')
 var template = require('./template')
 var configuration = require('./configuration')
+var route_processor = require('./route_processor')
 
 var env = configuration.get_env()
-var git = new github({token: getters.get_local_text('.github_token')});
 
 var app = express();
 
 env.templater = template.NewEngine(env)
+env.route_processor = route_processor.NewProcessor(app, env)
+env.git = new github({token: getters.get_local_text('.github_token')});
+var git = env.git
 var GetTemplateSource = env.templater.GetTemplateSource
 var RenderData = env.templater.RenderData
 var MakeRoute = env.templater.MakeRoute
-
-var RoutesFromConfig = function(repo, prefix, config) {
-    var router = express.Router()
-    if (env.local) {
-        app.use("/", router)
-    }
-    app.use("/" + prefix, router);
-    for (var route in config) {
-        if (!config.hasOwnProperty(route)) continue
-        console.log("Initializing route: /" + prefix + route)
-        console.log("Route context from: " + config[route].context.url + "\n")
-        MakeRoute(config, repo, route, router)
-    }
-}
-
-var RoutesFromRepo = function(user, repo) {
-    console.log("\nInitializing routes from repo: " + repo + "\n");
-    var prefix = repo,
-        gh_repo = git.getRepo(user, repo);
-    GetTemplateSource(gh_repo, 'config.json', function(e, d) {
-        RoutesFromConfig(gh_repo, prefix, d);
-    });
-}
 
 if (env.github) {
     var whitelist_repo = git.getRepo(process.env.GH_USER, process.env.GH_REPO)
     GetTemplateSource(whitelist_repo, "whitelist.json", function (e, whitelist) {
         if (e) console.log(e)
         whitelist.forEach(function(d) {
-            RoutesFromRepo(d.username, d.repository);
+            env.route_processor.RoutesFromRepo(d.username, d.repository);
         })
     })
 } else {
     console.log("\nInitializing routes from local\n");
     var config = getters.get_local_json('config.json');
-    RoutesFromConfig(false, false, config);
+    env.route_processor.RoutesFromConfig(false, false, config);
 }
 
 app.use(function(err, req, res, next) {
