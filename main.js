@@ -2,8 +2,12 @@
 var githubhook = require('githubhook')
 var app = require('./app')
 
+var getters = require('./getters')
+
 var main = function(){
-    var github = githubhook()
+    var github = githubhook({
+        secret: getters.get_local_text('.github_token')
+    })
     var app_instance = app.get_running()
 
     github.listen();
