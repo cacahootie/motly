@@ -1,22 +1,18 @@
 
-var fs = require("fs");
-var path = require('path');
+var fs = require("fs")
+var path = require('path')
 
-var express = require('express');
-var github = require("github-api");
+var express = require('express')
+var github = require("github-api")
 var morgan = require("morgan");
-
 
 var getters = require('./getters')
 var template = require('./template')
 
-var get_local_text = getters.get_local_text
-var get_local_json = getters.get_local_json
-var GetContextData = getters.GetContextData
 
 var env = {'local': true}
 if (process.env.GITHUB || process.env.GH_REPO) {
-    var git = new github({token: get_local_text('.github_token')});
+    var git = new github({token: getters.get_local_text('.github_token')});
     env = {'github':true}
 }
 
@@ -60,7 +56,7 @@ if (env.github) {
     })
 } else {
     console.log("\nInitializing routes from local\n");
-    var config = get_local_json('config.json');
+    var config = getters.get_local_json('config.json');
     RoutesFromConfig(false, false, config);
 }
 
