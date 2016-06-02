@@ -8,13 +8,10 @@ var morgan = require("morgan");
 
 var getters = require('./getters')
 var template = require('./template')
+var configuration = require('./configuration')
 
-
-var env = {'local': true}
-if (process.env.GITHUB || process.env.GH_REPO) {
-    var git = new github({token: getters.get_local_text('.github_token')});
-    env = {'github':true}
-}
+var env = configuration.get_env()
+var git = new github({token: getters.get_local_text('.github_token')});
 
 var app = express();
 
