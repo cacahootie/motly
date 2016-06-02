@@ -28,3 +28,12 @@ exports.get_instance = function() {
     
     return app
 }
+
+exports.get_running = function() {
+    var app = exports.get_instance()
+    var port = process.env.PORT || 8000;
+    app.listen(port, '127.0.0.1', function(e) {
+        console.log("Running motly on port: " + port)
+    })
+    return app
+}
