@@ -8,9 +8,9 @@ var template = require('./template')
 var route_processor = require('./route_processor')
 
 var configuration = require('./configuration')
-var env = configuration.get_env()
 
 exports.get_instance = function() {
+    var env = configuration.get_env()
     var app = express()
     app.env = env
 
@@ -25,5 +25,6 @@ exports.get_instance = function() {
         res.status(500).send('Something broke!')
     })
     app.use(morgan('combined'))
+    
     return app
 }
