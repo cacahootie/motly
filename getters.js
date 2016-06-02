@@ -44,5 +44,13 @@ exports.getter_environment = function (env) {
         });
     }
 
+    self.MakeRoute = function(config, repo, route, router) {
+        router.get(route, function(req, res) {
+            exports.GetContextData(config[route].context, function(e, d) {
+                self.RenderData(repo, d.body, res)
+            })
+        })
+    }
+
     return self;
 }

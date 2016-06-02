@@ -20,19 +20,10 @@ if (process.env.GITHUB || process.env.GH_REPO) {
 
 var app = express();
 
-var genv = getters.getter_environment(env)
-var GetTemplateSource = genv.GetTemplateSource
-
-var RenderData = genv.RenderData
-
-
-var MakeRoute = function(config, repo, route, router) {
-    router.get(route, function(req, res) {
-        GetContextData(config[route].context, function(e, d) {
-            RenderData(repo, d.body, res)
-        });
-    });
-}
+env.getters = getters.getter_environment(env)
+var GetTemplateSource = env.getters.GetTemplateSource
+var RenderData = env.getters.RenderData
+var MakeRoute = env.getters.MakeRoute
 
 var RoutesFromConfig = function(repo, prefix, config) {
     var router = express.Router()
