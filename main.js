@@ -9,6 +9,7 @@ var morgan = require("morgan");
 
 var getters = require('./getters')
 var get_local_text = getters.get_local_text
+var get_local_json = getters.get_local_json
 
 var env = {'local': true}
 if (process.env.GITHUB || process.env.GH_REPO) {
@@ -18,11 +19,10 @@ if (process.env.GITHUB || process.env.GH_REPO) {
 
 var app = express();
 
-getters = getters.getter_environment(env)
-var get_local_json = getters.get_local_json
-var GetTemplateSource = getters.GetTemplateSource
-var GetData = getters.GetData
-var RenderData = getters.RenderData
+var genv = getters.getter_environment(env)
+var GetTemplateSource = genv.GetTemplateSource
+var GetData = genv.GetData
+var RenderData = genv.RenderData
 
 
 var MakeRoute = function(config, repo, route, router) {

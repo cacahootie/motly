@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 var request = require('supertest');
 
-var motly = require('../server');
+var motly = require('../main');
 var app = motly.app;
 
 describe('GET /cities', function() {

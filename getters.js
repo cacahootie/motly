@@ -16,17 +16,17 @@ exports.get_local_text = function(fname) {
     return fs.readFileSync(fname).toString()
 }
 
+exports.get_local_json = function(fname) {
+    return JSON.parse(fs.readFileSync(path.join(basefolder, '../motly-test', fname)).toString())
+}
+
 exports.getter_environment = function (env) {
     var self = {};
     
     if (env.github) {
         self.git = new github()
     }
-
-    self.get_local_json = function(fname) {
-        return JSON.parse(fs.readFileSync(path.join(basefolder, '../motly-test', fname)).toString())
-    }
-
+    
     self.GetTemplateSource = function(repo, fname, cb) {
         if (env.github) {
             console.log("Getting: " + fname) 
