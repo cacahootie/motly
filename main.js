@@ -9,9 +9,9 @@ var main = function(){
     github.listen();
     github.on('*', function (event, repo, ref, data) {
         console.log("received githubhook restart")
-        app.close()
+        app_instance.close()
         console.log("previous instance shut down")
-        app = app.get_running()
+        app_instance = app.get_running()
     })
     
 }
