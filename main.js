@@ -18,9 +18,6 @@ var app = express();
 env.templater = template.NewEngine(env)
 env.route_processor = route_processor.NewProcessor(app, env)
 env.git = new github({token: getters.get_local_text('.github_token')});
-var GetTemplateSource = env.templater.GetTemplateSource
-var RenderData = env.templater.RenderData
-var MakeRoute = env.templater.MakeRoute
 
 env.route_processor.Routes()
 
