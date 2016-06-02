@@ -8,10 +8,11 @@ var morgan = require("morgan");
 var nunjucks = require("nunjucks");
 
 var getters = require('./getters')
+var get_local_text = getters.get_local_text
 
 var env = {'local': true}
 if (process.env.GITHUB || process.env.GH_REPO) {
-    var git = new github();
+    var git = new github({token: get_local_text('.github_token')});
     env = {'github':true}
 }
 
@@ -20,6 +21,7 @@ var app = express();
 nunjucks.configure({
     autoescape: true
 });
+
 
 getters = getters.getter_environment(env)
 var get_local_json = getters.get_local_json
@@ -67,6 +69,7 @@ var RoutesFromRepo = function(user, repo) {
 if (env.github) {
     var repo = git.getRepo(process.env.GH_USER, process.env.GH_REPO)
     GetTemplateSource(repo, "whitelist.json", function (e, whitelist) {
+        console.log(e)
         whitelist.forEach(function(d) {
             RoutesFromRepo(d.username, d.repository);
         })
