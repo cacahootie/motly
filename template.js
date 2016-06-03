@@ -61,22 +61,21 @@ exports.NewEngine = function (app) {
           .end(cb)
     }
 
+    var render_data = function(repo, t_name, context, res) {
+        get_nunenv(repo).render(t_name, context, function (e,d) {
+            res.end(d)
+        })
+    }
 
     self.GetTemplateSource = function(repo, name, cb) {
         console.log("Getting: " + name) 
         return repo.getContents('master', name, 'raw', cb)
     }
 
-    self.RenderData = function(repo, t_name, context, res) {
-        get_nunenv(repo).render(t_name, context, function (e,d) {
-            res.end(d)
-        })
-    }
-
     self.GetHandler = function(config, repo, route, router) {
         router.get(route, function(req, res) {
             get_context_data(config[route].context, function(e, d) {
-                self.RenderData(repo, config[route].template, d.body, res)
+                render_data(repo, config[route].template, d.body, res)
             })
         })
     }
