@@ -21,13 +21,18 @@ var GitLoader = nunjucks.Loader.extend({
     },
 
     getSource: function(name, cb) {
+        var getContents = function(repo, branch, name, cb) {
+            repo.getContents(branch, name,'raw', cb)
+        }
+
         console.log("Getting source for: " + name)
         var noCache = process.env.NOCACHE,
             env = this.env
         if (this.env.github) {
-            this.repo.getContents('master', name, 'raw', function(e,src) {
+            getContents(this.repo, 'master', name, function(e,src) {
+                console.log()
                 if (e) {
-                    return env.base_repo.getContents('master', name, 'raw', function (e, src) {
+                    return getContents(env.base_repo, 'master', name, function (e, src) {
                         console.log("Got source from base for: " + name)
                         cb(e,{
                             src: src,
