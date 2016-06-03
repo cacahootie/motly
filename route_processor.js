@@ -36,7 +36,7 @@ exports.NewProcessor = function(app) {
         console.log("\nInitializing routes from repo: " + repo + "\n")
         var prefix = repo,
             gh_repo = env.git.getRepo(user, repo);
-        env.templater.GetTemplateSource(gh_repo, 'config.json', function(e, d) {
+        env.templater.GetSource(gh_repo, 'config.json', function(e, d) {
             self.RoutesFromConfig(gh_repo, prefix, d)
         });
     }
@@ -44,7 +44,7 @@ exports.NewProcessor = function(app) {
     self.Routes = function () {
         if (env.github) {
             var whitelist_repo = env.git.getRepo(process.env.GH_USER, process.env.GH_REPO)
-            env.templater.GetTemplateSource(whitelist_repo, "whitelist.json", function (e, whitelist) {
+            env.templater.GetSource(whitelist_repo, "whitelist.json", function (e, whitelist) {
                 if (e) console.log(e)
                 whitelist.forEach(function(d) {
                     self.RoutesFromRepo(d.username, d.repository)

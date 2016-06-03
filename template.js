@@ -67,7 +67,7 @@ exports.NewEngine = function (app) {
         })
     }
 
-    self.GetTemplateSource = function(repo, name, cb) {
+    self.GetSource = function(repo, name, cb) {
         console.log("Getting: " + name) 
         return repo.getContents('master', name, 'raw', cb)
     }
