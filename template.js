@@ -33,7 +33,7 @@ var GitLoader = nunjucks.Loader.extend({
                     noCache: noCache
                 })
             })
-        } else if (this.env.local) {
+        } else if (this.env.testing) {
             fs.readFile(path.join(basefolder, '../motly-test/' + name), function(e,src) {
                 cb(e,{
                     src: src,
@@ -41,7 +41,15 @@ var GitLoader = nunjucks.Loader.extend({
                     noCache: noCache
                 })  
             })
-        }
+        } else if (this.env.local) {
+            fs.readFile(path.join(basefolder, name), function(e,src) {
+                cb(e,{
+                    src: src,
+                    path: name,
+                    noCache: noCache
+                })  
+            })
+        } 
     }
 });
 

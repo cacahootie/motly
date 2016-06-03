@@ -11,7 +11,7 @@ exports.get_local_text = function(fname) {
 }
 
 exports.get_local_json = function(fname) {
-    return JSON.parse(fs.readFileSync(path.join(basefolder, '../motly-test', fname)).toString())
+    return JSON.parse(fs.readFileSync(path.join(basefolder, fname)).toString())
 }
 
 exports.get_context_data = function(robj, cb) {

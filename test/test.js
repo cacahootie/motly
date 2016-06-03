@@ -1,7 +1,7 @@
 var assert = require('chai').assert;
 var request = require('supertest');
 
-var app = require('../app').get_instance()
+var app = require('../app').get_instance('../motly-test')
 
 describe('GET /cities', function() {
   it('respond with text', function(done) {

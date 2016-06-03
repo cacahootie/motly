@@ -1,11 +1,28 @@
 
-var express = require('express')
+var fs = require('fs')
+var path = require('path')
 
-var getters = require('./getters')
+var express = require('express')
 
 exports.NewProcessor = function(app) {
     var self = {},
         env = app.env
+
+    var basefolder = env.project_dir || ''
+
+    var get_local_text = function(fname) {
+        return fs.readFileSync(path.join(basefolder, fname)).toString()
+    }
+
+    var get_local_json = function(fname) {
+        return JSON.parse(fs.readFileSync(path.join(basefolder, fname)).toString())
+    }
+
+    var get_context_data = function(robj, cb) {
+        request
+          .get(robj.url)
+          .end(cb)
+    }
 
     self.RoutesFromConfig = function(repo, prefix, config) {
         var router = express.Router()
@@ -41,7 +58,7 @@ exports.NewProcessor = function(app) {
             })
         } else {
             console.log("\nInitializing routes from local\n")
-            var config = getters.get_local_json('config.json')
+            var config = get_local_json('config.json')
             self.RoutesFromConfig(false, false, config)
         }
     }

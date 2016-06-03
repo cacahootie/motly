@@ -9,10 +9,11 @@ var route_processor = require('./route_processor')
 
 var configuration = require('./configuration')
 
-exports.get_instance = function() {
-    var env = configuration.get_env()
+exports.get_instance = function(project_dir) {
+    var env = configuration.get_env(project_dir)
     var app = express()
     app.env = env
+    env.project_dir = project_dir
 
     env.templater = template.NewEngine(app)
     env.route_processor = route_processor.NewProcessor(app)
