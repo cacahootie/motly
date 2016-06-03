@@ -14,23 +14,58 @@ nunjucks.configure({
     autoescape: true
 })
 
+var GitLoader = nunjucks.Loader.extend({
+    async: true,
+
+    init: function(env, repo) {
+        this.repo = repo
+        this.env = env
+    },
+
+    getSource: function(name, cb) {
+        console.log("Getting source for: " + name)
+        if (this.env.github) {
+            this.repo.getContents('master', name, 'raw', function(e,src) {
+                cb(e,{
+                    src: src,
+                    path: name,
+                    noCache: false
+                })
+            })
+        } else if (this.env.local) {
+            fs.readFile(path.join(basefolder, '../motly-test/' + name), function(e,src) {
+                cb(e,{
+                    src: src,
+                    path: name,
+                    noCache: false
+                })  
+            })
+        }
+    }
+});
+
 exports.NewEngine = function (app) {
     var self = {},
-        env = app.env
+        env = app.env,
+        nuns = {}
 
-    self.GetTemplateSource = function(repo, fname, cb) {
-        if (env.github) {
-            console.log("Getting: " + fname) 
-            return repo.getContents('master', fname, 'raw', cb)
-        } else if (env.local) {
-            return fs.readFile(path.join(basefolder, '../motly-test/' + fname), cb)
+    var get_nunenv = function(repo) {
+        if (!nuns[repo.__fullname]) {
+            nuns[repo.__fullname] = new nunjucks.Environment(new GitLoader(env, repo))
         }
+        return nuns[repo.__fullname]
+    }
+
+    self.GetTemplateSource = function(repo, name, cb) {
+        console.log("Getting: " + name) 
+        return repo.getContents('master', name, 'raw', cb)
     }
 
     self.RenderData = function(repo, context, res) {
-        self.GetTemplateSource(repo, "index.html", function (e, d){
-            res.end(nunjucks.renderString(d.toString(), context))
-        });
+        get_nunenv(repo).render('index.html', context, function (e,d) {
+            res.end(d)
+        })
+        
     }
 
     self.MakeRoute = function(config, repo, route, router) {
