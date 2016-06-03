@@ -24,12 +24,13 @@ var GitLoader = nunjucks.Loader.extend({
 
     getSource: function(name, cb) {
         console.log("Getting source for: " + name)
+        var noCache = process.env.NOCACHE
         if (this.env.github) {
             this.repo.getContents('master', name, 'raw', function(e,src) {
                 cb(e,{
                     src: src,
                     path: name,
-                    noCache: false
+                    noCache: noCache
                 })
             })
         } else if (this.env.local) {
@@ -37,7 +38,7 @@ var GitLoader = nunjucks.Loader.extend({
                 cb(e,{
                     src: src,
                     path: name,
-                    noCache: false
+                    noCache: noCache
                 })  
             })
         }
@@ -61,17 +62,16 @@ exports.NewEngine = function (app) {
         return repo.getContents('master', name, 'raw', cb)
     }
 
-    self.RenderData = function(repo, context, res) {
-        get_nunenv(repo).render('index.html', context, function (e,d) {
+    self.RenderData = function(repo, t_name, context, res) {
+        get_nunenv(repo).render(t_name, context, function (e,d) {
             res.end(d)
         })
-        
     }
 
     self.MakeRoute = function(config, repo, route, router) {
         router.get(route, function(req, res) {
             getters.get_context_data(config[route].context, function(e, d) {
-                self.RenderData(repo, d.body, res)
+                self.RenderData(repo, config[route].template, d.body, res)
             })
         })
     }
