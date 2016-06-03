@@ -22,9 +22,21 @@ var GitLoader = nunjucks.Loader.extend({
 
     getSource: function(name, cb) {
         console.log("Getting source for: " + name)
-        var noCache = process.env.NOCACHE
+        var noCache = process.env.NOCACHE,
+            env = this.env
         if (this.env.github) {
             this.repo.getContents('master', name, 'raw', function(e,src) {
+                if (e) {
+                    return env.base_repo.getContents('master', name, 'raw', function (e, src) {
+                        console.log("Got source from base for: " + name)
+                        cb(e,{
+                            src: src,
+                            path: name,
+                            noCache: noCache
+                        })
+                    })
+                }
+                console.log("Got source from project for: " + name)
                 cb(e,{
                     src: src,
                     path: name,
@@ -50,7 +62,9 @@ exports.NewEngine = function (app) {
 
     var get_nunenv = function(repo) {
         if (!nuns[repo.__fullname]) {
-            nuns[repo.__fullname] = new nunjucks.Environment(new GitLoader(env, repo))
+            nuns[repo.__fullname] = new nunjucks.Environment(
+                [new GitLoader(env, repo), new GitLoader(env, env.base_repo)]
+            )
         }
         return nuns[repo.__fullname]
     }
