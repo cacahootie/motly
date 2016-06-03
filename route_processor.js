@@ -10,18 +10,12 @@ exports.NewProcessor = function(app) {
 
     var basefolder = env.project_dir || ''
 
-    var get_local_text = function(fname) {
-        return fs.readFileSync(path.join(basefolder, fname)).toString()
-    }
-
-    var get_local_json = function(fname) {
+    self.get_local_json = function(fname) {
         return JSON.parse(fs.readFileSync(path.join(basefolder, fname)).toString())
     }
 
-    var get_context_data = function(robj, cb) {
-        request
-          .get(robj.url)
-          .end(cb)
+    self.get_local_text = function(fname) {
+        return fs.readFileSync(fname).toString()
     }
 
     self.RoutesFromConfig = function(repo, prefix, config) {
@@ -53,12 +47,12 @@ exports.NewProcessor = function(app) {
             env.templater.GetTemplateSource(whitelist_repo, "whitelist.json", function (e, whitelist) {
                 if (e) console.log(e)
                 whitelist.forEach(function(d) {
-                    self.RoutesFromRepo(d.username, d.repository);
+                    self.RoutesFromRepo(d.username, d.repository)
                 })
             })
         } else {
             console.log("\nInitializing routes from local\n")
-            var config = get_local_json('config.json')
+            var config = self.get_local_json('config.json')
             self.RoutesFromConfig(false, false, config)
         }
     }

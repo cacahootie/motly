@@ -6,8 +6,6 @@ var github = require("github-api")
 var nunjucks = require("nunjucks")
 var request = require('superagent')
 
-var getters = require('./getters')
-
 var basefolder = path.join(__dirname)
 
 nunjucks.configure({
@@ -65,6 +63,13 @@ exports.NewEngine = function (app) {
         return nuns[repo.__fullname]
     }
 
+    var get_context_data = function(robj, cb) {
+        request
+          .get(robj.url)
+          .end(cb)
+    }
+
+
     self.GetTemplateSource = function(repo, name, cb) {
         console.log("Getting: " + name) 
         return repo.getContents('master', name, 'raw', cb)
@@ -78,7 +83,7 @@ exports.NewEngine = function (app) {
 
     self.MakeRoute = function(config, repo, route, router) {
         router.get(route, function(req, res) {
-            getters.get_context_data(config[route].context, function(e, d) {
+            get_context_data(config[route].context, function(e, d) {
                 self.RenderData(repo, config[route].template, d.body, res)
             })
         })
