@@ -28,7 +28,7 @@ exports.NewProcessor = function(app) {
             if (!config.hasOwnProperty(route)) continue
             console.log("Initializing route: /" + prefix + route)
             console.log("Route context from: " + config[route].context.url + "\n")
-            env.templater.MakeRoute(config, repo, route, router)
+            env.templater.GetHandler(config, repo, route, router)
         }
     }
 
