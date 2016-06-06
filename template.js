@@ -66,7 +66,7 @@ exports.NewEngine = function (app) {
     var get_nunenv = function(repo) {
         if (!nuns[repo.__fullname]) {
             nuns[repo.__fullname] = new nunjucks.Environment(
-                [new GitLoader(env, repo), new GitLoader(env, env.base_repo)]
+                new GitLoader(env, repo)
             )
         }
         return nuns[repo.__fullname]
