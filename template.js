@@ -75,7 +75,12 @@ exports.NewEngine = function (app) {
     var get_context_data = function(robj, cb) {
         request
           .get(robj.url)
-          .end(cb)
+          .end(function(e,d) {
+              if (d.body[0]) {
+                  return cb(e, {"items": d.body})
+              }
+              cb(e, d.body)
+          })
     }
 
     var render_data = function(repo, t_name, context, res) {
@@ -92,7 +97,7 @@ exports.NewEngine = function (app) {
     self.GetHandler = function(config, repo, route, router) {
         router.get(route, function(req, res) {
             get_context_data(config[route].context, function(e, d) {
-                render_data(repo, config[route].template, d.body, res)
+                render_data(repo, config[route].template, d, res)
             })
         })
     }
