@@ -5,6 +5,7 @@ var urllib = require('url')
 
 var github = require("github-api")
 var nunjucks = require("nunjucks")
+var parallel = require('run-parallel')
 var request = require('superagent')
 
 nunjucks.configure({
@@ -73,18 +74,40 @@ exports.NewEngine = function (app) {
         return nuns[repo.__fullname]
     }
 
-    var get_context_data = function(robj, cb) {
-
+    var do_request = function (robj, cb) {
         var url = nunjucks.renderString(robj.url, robj)
         console.log('getting: ' + url)
         request
           .get(url)
           .end(function(e,d) {
+              if (typeof(d) === 'undefined') {
+                  return cb(new Error("no data"), null)
+              }
               if (d.body[0]) {
                   return cb(e, {"items": d.body})
               }
               cb(e, d.body)
           })
+    }
+
+    var request_closure = function(robj) {
+        return function(c) {
+            do_request(robj,c)
+        }
+    }
+
+    var get_context_data = function(robj, cb) {
+        if (robj.url) {
+            return do_request(robj, cb)
+        }
+        var pobj = {}
+        for (var r in robj) {
+            if (r == 'req') continue
+            pobj[r] = request_closure(robj[r])
+        }
+        parallel(pobj, function(e, results) {
+            return cb(e, results)
+        })
     }
 
     var render_data = function(repo, t_name, context, res) {
