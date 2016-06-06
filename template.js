@@ -73,8 +73,11 @@ exports.NewEngine = function (app) {
     }
 
     var get_context_data = function(robj, cb) {
+
+        var url = nunjucks.renderString(robj.url, robj)
+        console.log('getting: ' + url)
         request
-          .get(robj.url)
+          .get(url)
           .end(function(e,d) {
               if (d.body[0]) {
                   return cb(e, {"items": d.body})
@@ -96,7 +99,9 @@ exports.NewEngine = function (app) {
 
     self.GetHandler = function(config, repo, route, router) {
         router.get(route, function(req, res) {
-            get_context_data(config[route].context, function(e, d) {
+            var robj = JSON.parse(JSON.stringify(config[route].context))
+            robj.req = req
+            get_context_data(robj, function(e, d) {
                 render_data(repo, config[route].template, d, res)
             })
         })
