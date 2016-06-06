@@ -1,6 +1,7 @@
 
 var fs = require('fs')
 var path = require('path')
+var urllib = require('url')
 
 var github = require("github-api")
 var nunjucks = require("nunjucks")
@@ -101,6 +102,7 @@ exports.NewEngine = function (app) {
         router.get(route, function(req, res) {
             var robj = JSON.parse(JSON.stringify(config[route].context))
             robj.req = req
+            req.queryString = urllib.parse(req.url).query
             get_context_data(robj, function(e, d) {
                 render_data(repo, config[route].template, d, res)
             })

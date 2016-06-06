@@ -19,7 +19,7 @@ exports.NewProcessor = function(app) {
     }
 
     self.RoutesFromConfig = function(repo, prefix, config) {
-        var router = express.Router()
+        var router = express.Router({strict: true})
         if (env.local) {
             app.use("/", router)
         }
