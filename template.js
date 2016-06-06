@@ -6,8 +6,6 @@ var github = require("github-api")
 var nunjucks = require("nunjucks")
 var request = require('superagent')
 
-var basefolder = path.join(__dirname)
-
 nunjucks.configure({
     autoescape: true
 })
@@ -26,11 +24,11 @@ var GitLoader = nunjucks.Loader.extend({
         }
 
         console.log("Getting source for: " + name)
-        var noCache = process.env.NOCACHE,
-            env = this.env
+        var env = this.env,
+            noCache = env.NOCACHE
+
         if (this.env.github) {
             getContents(this.repo, 'master', name, function(e,src) {
-                console.log()
                 if (e) {
                     return getContents(env.base_repo, 'master', name, function (e, src) {
                         console.log("Got source from base for: " + name)
@@ -54,9 +52,9 @@ var GitLoader = nunjucks.Loader.extend({
                     src: src,
                     path: name,
                     noCache: noCache
-                })  
+                })
             })
-        } 
+        }
     }
 });
 
@@ -87,7 +85,7 @@ exports.NewEngine = function (app) {
     }
 
     self.GetSource = function(repo, name, cb) {
-        console.log("Getting: " + name) 
+        console.log("Getting: " + name)
         return repo.getContents('master', name, 'raw', cb)
     }
 
