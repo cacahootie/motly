@@ -59,7 +59,7 @@ corresponding to routes (starting with `/`), where the values are objects
 which describe the route using keys such as `template` and `context`, as well
 as other optional keys.
 
-### single route example
+#### single route example
 ```javascript
 {
     "/posts/":{
@@ -78,7 +78,7 @@ For more a more complex example, look at `/motly-demo`.
 Sometimes you want to render a particular template using more than one different
 JSON request.  Motly allows you to do this!
 
-### multi-context example
+#### multi-context example
 ```javascript
 {
     "/places":{
