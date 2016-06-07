@@ -119,6 +119,8 @@ exports.NewEngine = function (app) {
     }
 
     var render_data = function(repo, cfg, context, res, req) {
+        context.req = req
+        console.log(context.req)
         get_nunenv(repo).render(cfg.template, context, function (e,d) {
             if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
             res.end(d)
@@ -136,7 +138,10 @@ exports.NewEngine = function (app) {
                 var cresult = cache.get(req.url)
                 if (cresult) return res.end(cresult)
             }
-            var robj = JSON.parse(JSON.stringify(config[route].context))
+            var robj = {}
+            if (config[route].context) {
+                robj = JSON.parse(JSON.stringify(config[route].context))
+            }
             robj.req = req
             req.queryString = urllib.parse(req.url).query
             get_context_data(robj, function(e, d) {
