@@ -59,7 +59,7 @@ corresponding to routes (starting with `/`), where the values are objects
 which describe the route using keys such as `template` and `context`, as well
 as other optional keys.
 
-#### single route example
+###### single route example
 ```javascript
 {
     "/posts/":{
@@ -116,7 +116,7 @@ automatically handle that case for apis you don't control.
 Sometimes you want to render a particular template using more than one different
 JSON request.  Motly allows you to do this!
 
-#### multi-context example
+###### multi-context example
 ```javascript
 {
     "/places":{
@@ -150,10 +150,10 @@ Sometimes what you render on the page can only be known at the time of the
 request.  For instance, user data can only be passed to a back-end api if there
 is some mechanism of communication.  Luckily, there is... the express request
 object is available for templating the URL and the final response.  This allows
-you to use url path parameters as part of your api request, or to use some
-aspect of the request in your templates or filters.
+you to use url path or query string parameters as part of your api request, or
+to use some aspect of the request in your templates or filters.
 
-#### query string example
+###### query string example
 ```javascript
 {
     "/namegenerator":{
@@ -165,7 +165,7 @@ aspect of the request in your templates or filters.
 }
 ```
 
-### url path parameter example
+###### url path parameter example
 ```javascript
 {
     "/posts/:id":{
