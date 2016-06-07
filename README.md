@@ -72,7 +72,45 @@ as other optional keys.
     }
 }
 ```
-For more a more complex example, look at `/motly-demo`.
+Assuming that the JSON at the specified URL looks like this:
+```javascript
+[
+    {
+        "userId": 1,
+        "id": 1,
+        "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+        "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+    },
+    ...
+]
+```
+The template will have available an iterable that you could make use of like:
+```html
+    {% for item in items %}
+        {{ item.userId }}
+        {{ item.title }}
+    {% endfor %}
+```
+Where did `items` come from, you ask?  Well, because of how the templates work,
+the context itself needs to be an object, but an array could be valid json.  To
+handle this case, arrays are given to the template inside a context object under
+`items`.  If instead, the JSON looked like this:
+```javascript
+    {
+        "results":[
+            {
+                "userId": 1,
+                "id": 1,
+                "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+                "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+            },
+            ...
+        ]
+    }
+```
+We could access that iterable as `{{ results }}` instead of `{{ items }}`.  It is
+best practice not to return a bare array as a JSON result, but this will
+automatically handle that case for apis you don't control.
 
 ## multiple request context
 Sometimes you want to render a particular template using more than one different
@@ -93,6 +131,48 @@ JSON request.  Motly allows you to do this!
                 "url":"http://relately.slothattax.me/select/world/countries",
                 "ttl":60000
             }
+        }
+    }
+}
+```
+Which we could use like this:
+```html
+    {% for item in cities %}
+        {{ item.name }}
+    {% endfor %}
+    {% for item in countries %}
+        {{ item.name }}
+    {% endfor %}
+```
+
+# Context Request Templating
+Sometimes what you render on the page can only be known at the time of the
+request.  For instance, user data can only be passed to a back-end api if there
+is some mechanism of communication.  Luckily, there is... the express request
+object is available for templating the URL and the final response.  This allows
+you to use url path parameters as part of your api request, or to use some
+aspect of the request in your templates or filters.
+
+#### query string example
+```javascript
+{
+    "/namegenerator":{
+        "template":"names.html",
+        "context":{
+            "url":"http://uinames.com/api/?{{ req.queryString }}"
+        }
+    }
+}
+```
+
+### url path parameter example
+```javascript
+{
+    "/posts/:id":{
+        "template":"post.html",
+        "context":{
+            "url":"http://jsonplaceholder.typicode.com/posts/{{ req.params.id }}",
+            "ttl":60000
         }
     }
 }
