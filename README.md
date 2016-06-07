@@ -12,7 +12,8 @@ template and one or more back-end apis from which to get a JSON context.  The
 idea is to create a "view-only" layer that delegates all handling of data to
 different microservices.  One advantage of this approach is that for templates
 rendered using publicly accessible apis, the same templates (and filters, and
-routing) are able to be used either on the server or the client.
+routing) are able to be used either on the server or the client. (client-side is
+currently vapor-ware)
 
 One of the key features of Motly is the ability to set up one server and use
 a whitelist system to deploy new projects, transparently providing access to
@@ -30,7 +31,12 @@ that the first time a page is rendered, the template is fetched from github,
 compiled then rendered.  However, the next time, the cached, compiled template
 will be used, resulting in quick performance.  The further benefit is that the
 server only loads routes that are needed, rather than pre-loading every branch
-in every project.
+in every project.  For contexts that are defined with a `ttl` parameter, each
+unique url accessed (i.e. via templating) is cached for that number of
+miliseconds in-memory.  Choose this `ttl` wisely both for memory management and
+freshness purposes, as it will completely ignore any cache headers from what
+you've requested.  There is also a `NOCACHE` environment variable that is
+respected by all aspects of the cache, from templates to data contexts.
 
 # usage
 This application has two usage modes, local development and github mode.  In
@@ -67,3 +73,27 @@ as other optional keys.
 }
 ```
 For more a more complex example, look at `/motly-demo`.
+
+## multiple request context
+Sometimes you want to render a particular template using more than one different
+JSON request.  Motly allows you to do this!
+
+### multi-context example
+```javascript
+{
+    "/places":{
+        "template":"places.html",
+        "ttl":60000,
+        "context":{
+            "cities":{
+                "url":"http://relately.slothattax.me/select/world/cities",
+                "ttl":60000
+            },
+            "countries":{
+                "url":"http://relately.slothattax.me/select/world/countries",
+                "ttl":60000
+            }
+        }
+    }
+}
+```
