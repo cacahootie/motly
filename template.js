@@ -3,6 +3,7 @@ var fs = require('fs')
 var path = require('path')
 var urllib = require('url')
 
+var cache = require('memory-cache')
 var github = require("github-api")
 var nunjucks = require("nunjucks")
 var parallel = require('run-parallel')
@@ -76,6 +77,8 @@ exports.NewEngine = function (app) {
 
     var do_request = function (robj, cb) {
         var url = nunjucks.renderString(robj.url, robj)
+        var cresult = cache.get(url)
+        if (cresult) return cb(null, cresult)
         console.log('getting: ' + url)
         request
           .get(url)
@@ -84,9 +87,12 @@ exports.NewEngine = function (app) {
                   return cb(new Error("no data"), null)
               }
               if (d.body[0]) {
-                  return cb(e, {"items": d.body})
+                  var results = {"items": d.body}
+                  cache.put(url, results, 1000 * 60)
+                  return cb(e, results)
               }
-              cb(e, d.body)
+              cache.put(url, d.body, 1000 * 60)
+              return cb(e, d.body)
           })
     }
 
