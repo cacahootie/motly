@@ -41,16 +41,28 @@ respected by all aspects of the cache, from templates to data contexts.
 # usage
 This application has two usage modes, local development and github mode.  In
 local development mode, it uses a `config.json` file either in the current dir,
-or defined in the environment variable `PROJECT_DIR`.  In GitHub mode, the
-`GH_USER` and `GH_REPO` environment variables are used to define a location
-to look for either a `whitelist.json` or a `config.json`.  In the case of
-finding a whitelist, the server will parse the whitelist and instantiate the
-multiple GitHub repositories defined, each of which should have a `config.json`
-which will be used for that project.
+or defined in the environment variable `PROJECT_DIR`.  Local mode always runs
+in NOCACHE mode as well, as it is intended for development purposes.
 
-The server may be run using `node main.js`, or run using nodemon and the
-included nodemon file (recommended), or using some more complex solution of your
-choosing.
+```bash
+PROJECT_DIR='../motly-test' PORT=8001 motly
+```
+
+In GitHub mode, the`GH_USER` and `GH_REPO` environment variables are used to
+define a location to look for either a `whitelist.json` or a `config.json`.  In
+the case of finding a whitelist, the server will parse the whitelist and
+instantiate the multiple GitHub repositories defined, each of which should have
+a `config.json` which will be used for that project.
+
+```bash
+PORT=8009 GH_USER=cacahootie GH_REPO=motly-test NOCACHE=true motly
+```
+
+The server may be run using `motly`.  Unless you're changing code in motly
+itself, there's no need to run it under nodemon or the like, just use NOCACHE or
+local mode... except for changes to `config.json` which do require a restart.
+In public/cached environments, github webhooks can be used to cause a server
+restart, which will work for either config or template changes.
 
 # template projects
 A project is either a local folder or a github repository which contains a
