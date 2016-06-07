@@ -118,8 +118,9 @@ exports.NewEngine = function (app) {
         })
     }
 
-    var render_data = function(repo, t_name, context, res) {
-        get_nunenv(repo).render(t_name, context, function (e,d) {
+    var render_data = function(repo, cfg, context, res, req) {
+        get_nunenv(repo).render(cfg.template, context, function (e,d) {
+            if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
             res.end(d)
         })
     }
@@ -131,11 +132,15 @@ exports.NewEngine = function (app) {
 
     self.GetHandler = function(config, repo, route, router) {
         router.get(route, function(req, res) {
+            if (config[route].ttl) {
+                var cresult = cache.get(req.url)
+                if (cresult) return res.end(cresult)
+            }
             var robj = JSON.parse(JSON.stringify(config[route].context))
             robj.req = req
             req.queryString = urllib.parse(req.url).query
             get_context_data(robj, function(e, d) {
-                render_data(repo, config[route].template, d, res)
+                render_data(repo, config[route], d, res, req)
             })
         })
     }
