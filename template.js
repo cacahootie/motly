@@ -78,7 +78,9 @@ exports.NewEngine = function (app) {
     var do_request = function (robj, cb) {
         var url = nunjucks.renderString(robj.url, robj)
         var cresult = cache.get(url)
-        if (cresult) return cb(null, cresult)
+        if (robj.ttl) {
+            if (cresult) return cb(null, cresult)
+        }
         console.log('getting: ' + url)
         request
           .get(url)
@@ -91,7 +93,7 @@ exports.NewEngine = function (app) {
                   cache.put(url, results, 1000 * 60)
                   return cb(e, results)
               }
-              cache.put(url, d.body, 1000 * 60)
+              if (robj.ttl) cache.put(url, d.body, robj.ttl)
               return cb(e, d.body)
           })
     }
