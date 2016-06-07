@@ -45,7 +45,7 @@ or defined in the environment variable `PROJECT_DIR`.  Local mode always runs
 in NOCACHE mode as well, as it is intended for development purposes.
 
 ```bash
-PROJECT_DIR='../motly-test' PORT=8001 motly
+$ PROJECT_DIR='../motly-test' PORT=8001 motly
 ```
 
 In GitHub mode, the`GH_USER` and `GH_REPO` environment variables are used to
@@ -55,7 +55,7 @@ instantiate the multiple GitHub repositories defined, each of which should have
 a `config.json` which will be used for that project.
 
 ```bash
-PORT=8009 GH_USER=cacahootie GH_REPO=motly-test NOCACHE=true motly
+$ PORT=8009 GH_USER=cacahootie GH_REPO=motly-test NOCACHE=true motly
 ```
 
 The server may be run using `motly`.  Unless you're changing code in motly
