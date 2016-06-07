@@ -86,27 +86,27 @@ Assuming that the JSON at the specified URL looks like this:
 ```
 The template will have available an iterable that you could make use of like:
 ```html
-    {% for item in items %}
-        {{ item.userId }}
-        {{ item.title }}
-    {% endfor %}
+{% for item in items %}
+    {{ item.userId }}
+    {{ item.title }}
+{% endfor %}
 ```
 Where did `items` come from, you ask?  Well, because of how the templates work,
 the context itself needs to be an object, but an array could be valid json.  To
 handle this case, arrays are given to the template inside a context object under
 `items`.  If instead, the JSON looked like this:
 ```javascript
-    {
-        "results":[
-            {
-                "userId": 1,
-                "id": 1,
-                "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
-                "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
-            },
-            ...
-        ]
-    }
+{
+    "results":[
+        {
+            "userId": 1,
+            "id": 1,
+            "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+            "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+        },
+        ...
+    ]
+}
 ```
 We could access that iterable as `{{ results }}` instead of `{{ items }}`.  It is
 best practice not to return a bare array as a JSON result, but this will
@@ -137,12 +137,12 @@ JSON request.  Motly allows you to do this!
 ```
 Which we could use like this:
 ```html
-    {% for item in cities %}
-        {{ item.name }}
-    {% endfor %}
-    {% for item in countries %}
-        {{ item.name }}
-    {% endfor %}
+{% for item in cities %}
+    {{ item.name }}
+{% endfor %}
+{% for item in countries %}
+    {{ item.name }}
+{% endfor %}
 ```
 
 # Context Request Templating
