@@ -11,14 +11,16 @@ exports.NewProcessor = function(app) {
     var basefolder = env.project_dir || ''
 
     self.get_local_json = function(fname) {
-        return JSON.parse(fs.readFileSync(path.join(basefolder, fname)).toString())
+        return JSON.parse(
+            fs.readFileSync(path.join(basefolder, fname)).toString()
+        )
     }
 
     self.get_local_text = function(fname) {
         return fs.readFileSync(fname).toString()
     }
 
-    self.RoutesFromConfig = function(repo, prefix, config) {
+    var RoutesFromConfig = function(repo, prefix, config) {
         var router = express.Router({strict: true})
         if (env.local) {
             app.use("/", router)
@@ -34,29 +36,40 @@ exports.NewProcessor = function(app) {
         }
     }
 
-    self.RoutesFromRepo = function(user, repo) {
+    var RoutesFromRepo = function(user, repo) {
         console.log("\nInitializing routes from repo: " + repo + "\n")
         var prefix = repo,
             gh_repo = env.git.getRepo(user, repo);
         env.templater.GetSource(gh_repo, 'config.json', function(e, d) {
-            self.RoutesFromConfig(gh_repo, prefix, d)
+            RoutesFromConfig(gh_repo, prefix, d)
         });
     }
 
-    self.Routes = function () {
-        if (env.github) {
-            var whitelist_repo = env.git.getRepo(process.env.GH_USER, process.env.GH_REPO)
-            env.templater.GetSource(whitelist_repo, "whitelist.json", function (e, whitelist) {
-                if (e) console.log(e)
+    var local_routes = function () {
+        console.log("\nInitializing routes from local\n")
+        var config = self.get_local_json('config.json')
+        RoutesFromConfig(false, false, config)
+    }
+
+    var git_routes = function () {
+        var whitelist_repo = env.git.getRepo(
+            env.whitelist_gh_user, env.whitelist_gh_repo
+        )
+        env.templater.GetSource(
+            whitelist_repo,
+            "whitelist.json",
+            function (e, whitelist) {
+                if (e) return console.log(e)
                 whitelist.forEach(function(d) {
-                    self.RoutesFromRepo(d.username, d.repository)
+                    RoutesFromRepo(d.username, d.repository)
                 })
-            })
-        } else {
-            console.log("\nInitializing routes from local\n")
-            var config = self.get_local_json('config.json')
-            self.RoutesFromConfig(false, false, config)
-        }
+            }
+        )
+    }
+
+    self.Routes = function () {
+        if (env.github) return git_routes()
+        return local_routes()
     }
 
     return self

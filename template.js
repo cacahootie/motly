@@ -16,22 +16,24 @@ nunjucks.configure({
 var GitLoader = nunjucks.Loader.extend({
     async: true,
 
-    init: function(env, repo) {
+    init: function(env, repo, branch) {
         this.repo = repo
         this.env = env
+        this.branch = branch || 'master'
     },
 
     getSource: function(name, cb) {
         var getContents = function(repo, branch, name, cb) {
-            repo.getContents(branch, name,'raw', cb)
+            repo.getContents(branch, name, 'raw', cb)
         }
 
-        console.log("Getting source for: " + name)
         var env = this.env,
             noCache = env.NOCACHE
 
         if (this.env.github) {
-            getContents(this.repo, 'master', name, function(e,src) {
+            var branch = this.branch
+            console.log("Getting source for: " + name)
+            getContents(this.repo, branch, name, function(e,src) {
                 if (e) {
                     return getContents(env.base_repo, 'master', name, function (e, src) {
                         console.log("Got source from base for: " + name)
@@ -42,7 +44,7 @@ var GitLoader = nunjucks.Loader.extend({
                         })
                     })
                 }
-                console.log("Got source from project for: " + name)
+                console.log("Got source from project for: " + name + " from branch: " + branch)
                 cb(e,{
                     src: src,
                     path: name,
@@ -66,13 +68,14 @@ exports.NewEngine = function (app) {
         env = app.env,
         nuns = {}
 
-    var get_nunenv = function(repo) {
-        if (!nuns[repo.__fullname]) {
-            nuns[repo.__fullname] = new nunjucks.Environment(
-                new GitLoader(env, repo)
+    var get_nunenv = function(repo, branch) {
+        var key = repo.__fullname + ":" + branch
+        if (!nuns[key]) {
+            nuns[key] = new nunjucks.Environment(
+                new GitLoader(env, repo, branch)
             )
         }
-        return nuns[repo.__fullname]
+        return nuns[key]
     }
 
     var do_request = function (robj, cb) {
@@ -120,7 +123,8 @@ exports.NewEngine = function (app) {
 
     var render_data = function(repo, cfg, context, res, req) {
         context.req = req
-        get_nunenv(repo).render(cfg.template, context, function (e,d) {
+        console.log(req.params.branch)
+        get_nunenv(repo, req.params.branch).render(cfg.template, context, function (e,d) {
             if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
             res.end(d)
         })
@@ -132,7 +136,7 @@ exports.NewEngine = function (app) {
     }
 
     self.GetHandler = function(config, repo, route, router) {
-        router.get(route, function(req, res) {
+        var handler = function(req, res) {
             if (config[route].ttl) {
                 var cresult = cache.get(req.url)
                 if (cresult) return res.end(cresult)
@@ -146,7 +150,10 @@ exports.NewEngine = function (app) {
             get_context_data(robj, function(e, d) {
                 render_data(repo, config[route], d, res, req)
             })
-        })
+        }
+
+        router.get('/:branch' + route, handler)
+        router.get(route, handler)
     }
 
     return self;
