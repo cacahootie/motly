@@ -71,6 +71,11 @@ corresponding to routes (starting with `/`), where the values are objects
 which describe the route using keys such as `template` and `context`, as well
 as other optional keys.
 
+An example project demonstrating the capabilities of motly is available in the
+(motly-demo)[https://github.com/cacahootie/motly-demo/] repository.  The
+whitelist example is in the
+(motly-test)[https://github.com/cacahootie/motly-test/] repo.
+
 ##### single route example
 ```javascript
 {
