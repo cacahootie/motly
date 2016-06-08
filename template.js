@@ -78,6 +78,25 @@ exports.NewEngine = function (app) {
         return nuns[key]
     }
 
+    var eachRecursive = function (obj, robj) {
+        for (var k in obj) {
+            if (typeof obj[k] === 'string') {
+                obj[k] = nunjucks.renderString(obj[k], robj)
+                console.log(obj[k])
+                continue
+            } else if (typeof obj[k] == 'object' && obj[k] !== null) {
+                eachRecursive(obj[k], robj)
+                continue
+            }
+        }
+        return obj
+    }
+
+    var render_object = function(robj) {
+        obj = JSON.parse(JSON.stringify(robj.body))
+        return eachRecursive(obj, robj)
+    }
+
     var do_request = function (robj, cb) {
         var url = nunjucks.renderString(robj.url, robj)
         var cresult = cache.get(url)
@@ -87,7 +106,7 @@ exports.NewEngine = function (app) {
         console.log('getting: ' + url)
         var r = request[robj.method || 'get'](url)
         if (robj.method == 'post') {
-            r.send(robj.body)
+            r.send(render_object(robj))
         }
         r.end(function(e,d) {
             if (typeof(d) === 'undefined') {
