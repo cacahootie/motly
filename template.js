@@ -123,7 +123,6 @@ exports.NewEngine = function (app) {
 
     var render_data = function(repo, cfg, context, res, req) {
         context.req = req
-        console.log(req.params.branch)
         get_nunenv(repo, req.params.branch).render(cfg.template, context, function (e,d) {
             if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
             res.end(d)
