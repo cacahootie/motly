@@ -85,20 +85,22 @@ exports.NewEngine = function (app) {
             if (cresult) return cb(null, cresult)
         }
         console.log('getting: ' + url)
-        request
-          .get(url)
-          .end(function(e,d) {
-              if (typeof(d) === 'undefined') {
-                  return cb(new Error("no data"), null)
-              }
-              if (d.body[0]) {
-                  var results = {"items": d.body}
-                  cache.put(url, results, 1000 * 60)
-                  return cb(e, results)
-              }
-              if (robj.ttl) cache.put(url, d.body, robj.ttl)
-              return cb(e, d.body)
-          })
+        var r = request[robj.method || 'get'](url)
+        if (robj.method == 'post') {
+            r.send(robj.body)
+        }
+        r.end(function(e,d) {
+            if (typeof(d) === 'undefined') {
+                return cb(new Error("no data"), null)
+            }
+            if (d.body[0]) {
+                var results = {"items": d.body}
+                cache.put(url, results, 1000 * 60)
+                return cb(e, results)
+            }
+            if (robj.ttl) cache.put(url, d.body, robj.ttl)
+            return cb(e, d.body)
+        })
     }
 
     var request_closure = function(robj) {
