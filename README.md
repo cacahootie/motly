@@ -66,7 +66,7 @@ restart, which will work for either config or template changes.
 
 # template projects
 A project is either a local folder or a github repository which contains a
-`config.json` with the appropriate structure, namely, and object with keys
+`config.json` with the appropriate structure, namely, an object with keys
 corresponding to routes (starting with `/`), where the values are objects
 which describe the route using keys such as `template` and `context`, as well
 as other optional keys.
@@ -176,7 +176,7 @@ to use some aspect of the request in your templates or filters.
     "/namegenerator":{
         "template":"names.html",
         "context":{
-            "url":"http://uinames.com/api/?{{ req.queryString }}"
+            "url":"http://uinames.com/api/?{{ req.queryString }}" // queryString is added by motly to enable this use case
         }
     }
 }
