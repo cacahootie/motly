@@ -76,7 +76,6 @@ exports.NewEngine = function (app) {
         for (var k in obj) {
             if (typeof obj[k] === 'string') {
                 obj[k] = nunjucks.renderString(obj[k], robj)
-                console.log(obj[k])
                 continue
             } else if (typeof obj[k] == 'object' && obj[k] !== null) {
                 eachRecursive(obj[k], robj)
