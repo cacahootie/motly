@@ -189,3 +189,27 @@ to use some aspect of the request in your templates or filters.
     }
 }
 ```
+
+##### post with json body example
+```javascript
+{
+    "/cities_post":{
+        "template":"a.html",
+        "context":{
+            "url":"http://relately.slothattax.me/select",
+            "method":"post",
+            "body":{
+                "columns":["name"],
+                "target":"world.city",
+                "all":[
+                    {
+                        "left_operand": "countrycode",
+                        "operator": "=",
+                        "right_operand": "{{ req.query.countrycode }}"
+                    }
+                ]
+            }
+        }
+    }
+}
+```
