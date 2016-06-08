@@ -2,7 +2,7 @@
 templating server which merges web-service json with nunjucks templates.
 
 # installation
-`npm install -g motly`
+`npm install -g motly` (once the package is there... soon).
 
 # concept
 Motly provides a service which can be used for the local development, live
