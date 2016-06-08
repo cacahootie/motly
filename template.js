@@ -9,9 +9,7 @@ var nunjucks = require("nunjucks")
 var parallel = require('run-parallel')
 var request = require('superagent')
 
-nunjucks.configure({
-    autoescape: true
-})
+nunjucks.configure({ autoescape: true })
 
 var GitLoader = nunjucks.Loader.extend({
     async: true,
@@ -30,45 +28,41 @@ var GitLoader = nunjucks.Loader.extend({
         var env = this.env,
             noCache = env.NOCACHE
 
-        if (this.env.github) {
+        function package_result(e, src) {
+            return cb(e, {
+                src: src,
+                path: name,
+                noCache: noCache
+            })
+        }
+
+        if (env.github) {
             var branch = this.branch
             console.log("Getting source for: " + name)
             getContents(this.repo, branch, name, function(e,src) {
                 if (e) {
                     return getContents(env.base_repo, 'master', name, function (e, src) {
                         console.log("Got source from base for: " + name)
-                        cb(e,{
-                            src: src,
-                            path: name,
-                            noCache: noCache
-                        })
+                        package_result(e, src)
                     })
                 }
                 console.log("Got source from project for: " + name + " from branch: " + branch)
-                cb(e,{
-                    src: src,
-                    path: name,
-                    noCache: noCache
-                })
+                package_result(e, src)
             })
-        } else if (this.env.local) {
-            fs.readFile(path.join(this.env.project_dir || '', name), function(e,src) {
-                cb(e,{
-                    src: src,
-                    path: name,
-                    noCache: noCache
-                })
+        } else if (env.local) {
+            fs.readFile(path.join(env.project_dir || '', name), function(e,src) {
+                package_result(e, src)
             })
         }
     }
-});
+})
 
 exports.NewEngine = function (app) {
     var self = {},
         env = app.env,
         nuns = {}
 
-    var get_nunenv = function(repo, branch) {
+    function get_nunenv(repo, branch) {
         var key = repo.__fullname + ":" + branch
         if (!nuns[key]) {
             nuns[key] = new nunjucks.Environment(
@@ -78,7 +72,7 @@ exports.NewEngine = function (app) {
         return nuns[key]
     }
 
-    var eachRecursive = function (obj, robj) {
+    function eachRecursive (obj, robj) {
         for (var k in obj) {
             if (typeof obj[k] === 'string') {
                 obj[k] = nunjucks.renderString(obj[k], robj)
@@ -92,12 +86,12 @@ exports.NewEngine = function (app) {
         return obj
     }
 
-    var render_object = function(robj) {
+    function render_object(robj) {
         obj = JSON.parse(JSON.stringify(robj.body))
         return eachRecursive(obj, robj)
     }
 
-    var do_request = function (robj, cb) {
+    function do_request(robj, cb) {
         var url = nunjucks.renderString(robj.url, robj)
         var cresult = cache.get(url)
         if (robj.ttl) {
@@ -122,13 +116,13 @@ exports.NewEngine = function (app) {
         })
     }
 
-    var request_closure = function(robj) {
+    function request_closure(robj) {
         return function(c) {
             do_request(robj,c)
         }
     }
 
-    var get_context_data = function(robj, cb) {
+    function get_context_data(robj, cb) {
         if (robj.url) {
             return do_request(robj, cb)
         }
@@ -142,12 +136,16 @@ exports.NewEngine = function (app) {
         })
     }
 
-    var render_data = function(repo, cfg, context, res, req) {
+    function render_data(repo, cfg, context, res, req) {
         context.req = req
-        get_nunenv(repo, req.params.branch).render(cfg.template, context, function (e,d) {
-            if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
-            res.end(d)
-        })
+        get_nunenv(repo, req.params.branch).render(
+            cfg.template,
+            context,
+            function (e,d) {
+                if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
+                res.end(d)
+            }
+        )
     }
 
     self.GetSource = function(repo, name, cb) {
