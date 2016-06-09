@@ -15,7 +15,7 @@ rendered using publicly accessible apis, the same templates (and filters, and
 routing) are able to be used either on the server or the client. (client-side is
 currently vapor-ware)
 
-One of the key features of Motly is the ability to set up one server and use
+One of the key features of motly is the ability to set up one server and use
 a whitelist system to deploy new projects, transparently providing access to
 all branches published in the GitHub repo.  This means that you can develop,
 test and deploy code by managing branches in GitHub without any build process
