@@ -17,8 +17,8 @@ currently vapor-ware)
 
 One of the key features of motly is the ability to set up one server and use
 a whitelist system to deploy new projects, transparently providing access to
-all branches published in the GitHub repo.  This means that you can develop,
-test and deploy code by managing branches in GitHub without any build process
+all branches published in the github repo.  This means that you can develop,
+test and deploy code by managing branches in github without any build process
 required.  Motly provides github webhooks capability to restart the server
 whenever any of the repositories it is serving are modified (well, really,
 any webhook you configure with the correct secret will cause the routing to
@@ -48,10 +48,10 @@ in NOCACHE mode as well, as it is intended for development purposes.
 $ PROJECT_DIR='../motly-test' PORT=8001 motly
 ```
 
-In GitHub mode, the`GH_USER` and `GH_REPO` environment variables are used to
+In github mode, the`GH_USER` and `GH_REPO` environment variables are used to
 define a location to look for either a `whitelist.json` or a `config.json`.  In
 the case of finding a whitelist, the server will parse the whitelist and
-instantiate the multiple GitHub repositories defined, each of which should have
+instantiate the multiple github repositories defined, each of which should have
 a `config.json` which will be used for that project.
 
 ```bash
