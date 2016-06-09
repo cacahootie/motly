@@ -162,8 +162,8 @@ Which we could use like this:
 {% endfor %}
 ```
 
-# Context Request Templating
-Sometimes what you render on the page can only be known at the time of the
+# context request templating
+This is the juicy bit... sometimes what you render on the page can only be known at the time of the
 request.  For instance, user data can only be passed to a back-end api if there
 is some mechanism of communication.  Luckily, there is... the express request
 object is available for templating the URL and the final response.  This allows
