@@ -15,10 +15,10 @@ rendered using publicly accessible apis, the same templates (and filters, and
 routing) are able to be used either on the server or the client. (client-side is
 currently vapor-ware)
 
-One of the key features of Motly is the ability to set up one server and use
+One of the key features of motly is the ability to set up one server and use
 a whitelist system to deploy new projects, transparently providing access to
-all branches published in the GitHub repo.  This means that you can develop,
-test and deploy code by managing branches in GitHub without any build process
+all branches published in the github repo.  This means that you can develop,
+test and deploy code by managing branches in github without any build process
 required.  Motly provides github webhooks capability to restart the server
 whenever any of the repositories it is serving are modified (well, really,
 any webhook you configure with the correct secret will cause the routing to
@@ -48,10 +48,10 @@ in NOCACHE mode as well, as it is intended for development purposes.
 $ PROJECT_DIR='../motly-test' PORT=8001 motly
 ```
 
-In GitHub mode, the`GH_USER` and `GH_REPO` environment variables are used to
+In github mode, the`GH_USER` and `GH_REPO` environment variables are used to
 define a location to look for either a `whitelist.json` or a `config.json`.  In
 the case of finding a whitelist, the server will parse the whitelist and
-instantiate the multiple GitHub repositories defined, each of which should have
+instantiate the multiple github repositories defined, each of which should have
 a `config.json` which will be used for that project.
 
 ```bash
@@ -66,7 +66,7 @@ restart, which will work for either config or template changes.
 
 # template projects
 A project is either a local folder or a github repository which contains a
-`config.json` with the appropriate structure, namely, and object with keys
+`config.json` with the appropriate structure, namely, an object with keys
 corresponding to routes (starting with `/`), where the values are objects
 which describe the route using keys such as `template` and `context`, as well
 as other optional keys.
@@ -162,8 +162,8 @@ Which we could use like this:
 {% endfor %}
 ```
 
-# Context Request Templating
-Sometimes what you render on the page can only be known at the time of the
+# context request templating
+This is the juicy bit... sometimes what you render on the page can only be known at the time of the
 request.  For instance, user data can only be passed to a back-end api if there
 is some mechanism of communication.  Luckily, there is... the express request
 object is available for templating the URL and the final response.  This allows
@@ -176,7 +176,7 @@ to use some aspect of the request in your templates or filters.
     "/namegenerator":{
         "template":"names.html",
         "context":{
-            "url":"http://uinames.com/api/?{{ req.queryString }}"
+            "url":"http://uinames.com/api/?{{ req.queryString }}" // queryString is added by motly to enable this use case
         }
     }
 }
