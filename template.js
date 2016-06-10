@@ -135,14 +135,39 @@ exports.NewEngine = function (app) {
         })
     }
 
-    function render_data(repo, cfg, context, res, req) {
+    function render_embed(cfg, res, d) {
+        var embed = {
+            "version": "1.0",
+            "type": "rich",
+            "html":d,
+            "width": 990,
+            "height": 300,
+            "title": "",
+            "url": "",
+            "author_name": "",
+            "author_url": "",
+            "provider_name": "",
+            "provider_url": ""
+        }
+        console.log(cfg)
+        if (cfg.embed) {
+            for (var key in cfg.embed.meta) {
+                if (!cfg.embed.meta.hasOwnProperty(key)) continue
+                embed[key] = cfg.embed.meta[key]
+            }
+        }
+        return res.json(embed)
+    }
+
+    function render(repo, cfg, context, res, req) {
         context.req = req
         get_nunenv(repo, req.params.branch).render(
             cfg.template,
             context,
             function (e,d) {
                 if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
-                res.end(d)
+                if (req.query.format == 'json') return render_embed(cfg, res, d)
+                else return res.end(d)
             }
         )
     }
@@ -165,7 +190,7 @@ exports.NewEngine = function (app) {
             robj.req = req
             req.queryString = urllib.parse(req.url).query
             get_context_data(robj, function(e, d) {
-                render_data(repo, config[route], d, res, req)
+                render(repo, config[route], d, res, req)
             })
         }
 
