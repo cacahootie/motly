@@ -149,7 +149,6 @@ exports.NewEngine = function (app) {
             "provider_name": "",
             "provider_url": ""
         }
-        console.log(cfg)
         if (cfg.embed) {
             for (var key in cfg.embed.meta) {
                 if (!cfg.embed.meta.hasOwnProperty(key)) continue
