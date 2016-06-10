@@ -1,4 +1,6 @@
 
+var urllib = require('url')
+
 var express = require('express')
 var github = require("github-api")
 var morgan = require("morgan")
@@ -21,9 +23,11 @@ exports.get_instance = function(project_dir) {
     env.templater = template.NewEngine(app)
 
     var embed_router = express.Router()
-    embed_router.get('/oembed/api', function(req, res, next) {
-        req.url = req.query.url + "?format=json"
-        next('route')
+    embed_router.get('/oembed/api', function(req, res) {
+        var parsed = urllib.parse(req.query.url).pathname
+        req.url = parsed
+        req.query.format = 'json'
+        return app.handle(req, res)
     })
     app.use('/', embed_router)
 
