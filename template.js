@@ -161,7 +161,8 @@ exports.NewEngine = function (app) {
     function render(repo, cfg, context, res, req) {
         context.req = req
         get_nunenv(repo, req.params.branch).render(
-            cfg.template,
+            req.query.format == 'json' && cfg.embed && cfg.embed.template ? 
+                cfg.embed.template : cfg.template,
             context,
             function (e,d) {
                 if (cfg.ttl) cache.put(req.url, d, cfg.ttl)

@@ -20,6 +20,13 @@ exports.get_instance = function(project_dir) {
     env.base_repo = env.git.getRepo(env.base_user, env.base_repo_name)
     env.templater = template.NewEngine(app)
 
+    var embed_router = express.Router()
+    embed_router.get('/oembed/api', function(req, res, next) {
+        req.url = req.query.url + "?format=json"
+        next('route')
+    })
+    app.use('/', embed_router)
+
     env.route_processor.Routes()
 
     app.use(function(err, req, res, next) {
