@@ -218,6 +218,31 @@ to use some aspect of the request in your templates or filters.
 }
 ```
 
+# oembed api
+Motly seamlessly provides an oembed api to support rendering any route as an oembed json, with the option to use a different template for the oembed html than the source page.
+```javascript
+"/countries":{
+    "template":"a.html",
+    "context":{
+        "url":"http://relately.slothattax.me/select/world/countries",
+        "ttl":60000
+    },
+    "embed":{
+        "template":"a_embed.html",
+        "meta":{
+            "version":"0.1",
+            "type":"rich",
+            "title":"Countries",
+            "author_name":"Bob's Body Shop",
+            "author_url":"http://www.bobs.com",
+            "provider_name":"motly",
+            "provider_url":"http://www.github.com/cacahootie/motly/"
+        }
+    }
+}
+```
+The oembed object can be accessed directly by `?format=json` query string.
+
 # future development
 - Module system which allows a template to be composed of modules which can be independently rendered as html-snippets for updates.
 - Companion microservices for data models for python/js using a similar concept.
