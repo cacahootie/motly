@@ -14,7 +14,6 @@ exports.get_instance = function(project_dir) {
     var env = configuration.get_env(project_dir)
     var app = express()
     app.env = env
-    env.project_dir = project_dir
 
     env.route_processor = route_processor.NewProcessor(app)
     app.__githubtoken = env.route_processor.get_local_text('.github_token')
