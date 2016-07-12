@@ -26,11 +26,11 @@ reload).
 
 Motly is designed with performance and developer ease in mind.  Motly makes use
 of nunjucks' caching and compilation capabilities, and also uses an in-memory
-cache for data contexts.  The routing system is lazy-loading, which means
+cache for data contexts.  The template system is lazy-loading, which means
 that the first time a page is rendered, the template is fetched from github,
 compiled then rendered.  However, the next time, the cached, compiled template
 will be used, resulting in quick performance.  The further benefit is that the
-server only loads routes that are needed, rather than pre-loading every branch
+server only loads templates for routes that are needed, rather than pre-loading every branch
 in every project.  For contexts that are defined with a `ttl` parameter, each
 unique url accessed (i.e. via templating) is cached for that number of
 miliseconds in-memory.  Choose this `ttl` wisely both for memory management and
@@ -49,8 +49,7 @@ $ PROJECT_DIR='../motly-test' PORT=8001 motly
 ```
 
 In github mode, the`GH_USER` and `GH_REPO` environment variables are used to
-define a location to look for either a `whitelist.json` or a `config.json`.  In
-the case of finding a whitelist, the server will parse the whitelist and
+define a location to look for a `whitelist.json`.  The server will parse the whitelist and
 instantiate the multiple github repositories defined, each of which should have
 a `config.json` which will be used for that project.
 
@@ -218,3 +217,34 @@ to use some aspect of the request in your templates or filters.
     }
 }
 ```
+
+# oembed api
+Motly seamlessly provides an oembed api to support rendering any route as an oembed json, with the option to use a different template for the oembed html than the source page.
+```javascript
+"/countries":{
+    "template":"a.html",
+    "context":{
+        "url":"http://relately.slothattax.me/select/world/countries",
+        "ttl":60000
+    },
+    "embed":{
+        "template":"a_embed.html",
+        "meta":{
+            "version":"0.1",
+            "type":"rich",
+            "title":"Countries",
+            "author_name":"Bob's Body Shop",
+            "author_url":"http://www.bobs.com",
+            "provider_name":"motly",
+            "provider_url":"http://www.github.com/cacahootie/motly/"
+        }
+    }
+}
+```
+The oembed object can be accessed directly by `?format=json` query string.
+
+# future development
+- Module system which allows a template to be composed of modules which can be independently rendered as html-snippets for updates.
+- Companion microservices for data models for python/js using a similar concept.
+- Improved configurability.
+- Improvements to object-string templater.
