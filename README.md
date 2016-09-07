@@ -2,7 +2,7 @@
 templating server which merges web-service json with nunjucks templates.
 
 # installation
-`npm install -g motly` (once the package is there... soon).
+`npm install -g motly`
 
 # concept
 Motly provides a service which can be used for the local development, live
@@ -38,21 +38,30 @@ freshness purposes, as it will completely ignore any cache headers from what
 you've requested.  There is also a `NOCACHE` environment variable that is
 respected by all aspects of the cache, from templates to data contexts.
 
-# usage
-This application has two usage modes, local development and github mode.  In
-local development mode, it uses a `config.json` file either in the current dir,
-or defined in the environment variable `PROJECT_DIR`.  Local mode always runs
-in NOCACHE mode as well, as it is intended for development purposes.
+# usage 
+This application has two usage modes, local development and github mode.
+In local development mode, it uses a `config.json` file either in the current
+dir, or defined in the environment variable `PROJECT_DIR`.  If you wish to use a
+base template directory, it will either expect `../motly-base` or a defined
+folder via `BASE_DIR`.  Local mode always runs in NOCACHE mode as well, as it is
+intended for development purposes.
 
+#### Simple
 ```bash
-$ PROJECT_DIR='../motly-test' PORT=8001 motly
+$ motly
+```
+
+#### Complex
+```bash
+$ BASE_DIR='../motly-base' PROJECT_DIR='../motly-test' PORT=8001 motly
 ```
 
 In github mode, the`GH_USER` and `GH_REPO` environment variables are used to
-define a location to look for a `whitelist.json`.  The server will parse the whitelist and
-instantiate the multiple github repositories defined, each of which should have
-a `config.json` which will be used for that project.
+define a location to look for a `whitelist.json`.  The server will parse the
+whitelist and instantiate the multiple github repositories defined, each of
+which should have a `config.json` which will be used for that project.
 
+#### Github Mode
 ```bash
 $ PORT=8009 GH_USER=cacahootie GH_REPO=motly-test NOCACHE=true motly
 ```
@@ -61,7 +70,9 @@ The server may be run using `motly`.  Unless you're changing code in motly
 itself, there's no need to run it under nodemon or the like, just use NOCACHE or
 local mode... except for changes to `config.json` which do require a restart.
 In public/cached environments, github webhooks can be used to cause a server
-restart, which will work for either config or template changes.
+restart, which will work for either config or template changes.  If you cannot
+use webhooks, then it is recommended to run in nocache mode to avoid stale
+templates.
 
 # template projects
 A project is either a local folder or a github repository which contains a
