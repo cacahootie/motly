@@ -17,7 +17,11 @@ exports.NewProcessor = function(app) {
     }
 
     self.get_local_text = function(fname) {
-        return fs.readFileSync(fname).toString()
+        try {
+            return fs.readFileSync(fname).toString()
+        } catch (e) {
+            return null
+        }
     }
 
     var RoutesFromConfig = function(repo, prefix, config) {

@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+
+var motly = require("motly/app_factory")
+
+app = motly.get_running()
