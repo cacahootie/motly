@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 
 var githubhook = require('githubhook')
 var app = require('./app_factory')
@@ -16,6 +17,4 @@ var main = function(){
     })   
 }
 
-if (require.main === module) {
-    main()
-}
+main()

@@ -16,7 +16,7 @@ exports.get_instance = function(project_dir) {
     app.env = env
 
     env.route_processor = route_processor.NewProcessor(app)
-    app.__githubtoken = env.route_processor.get_local_text('.github_token')
+    app.__githubtoken = process.env.githubtoken || env.route_processor.get_local_text('.github_token')
     env.git = new github({token: app.__githubtoken})
     env.base_repo = env.git.getRepo(env.base_user, env.base_repo_name)
     env.templater = template.NewEngine(app)

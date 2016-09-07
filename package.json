@@ -1,6 +1,6 @@
 {
   "name": "motly",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "nunjucks template microservice",
   "main": "main.js",
   "scripts": {
@@ -19,6 +19,9 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cacahootie/motly/issues"
+  },
+  "bin": {
+    "motly": "bin/motly"
   },
   "homepage": "https://github.com/cacahootie/motly",
   "dependencies": {

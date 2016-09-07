@@ -51,7 +51,14 @@ var GitLoader = nunjucks.Loader.extend({
             })
         } else if (env.local) {
             fs.readFile(path.join(env.project_dir || '', name), function(e,src) {
-                package_result(e, src)
+                if (!src) {
+                    console.log(path.join(env.base_dir, name))
+                    fs.readFile(path.join(env.base_dir, name), function(e,src) {
+                        package_result(e, src.toString('utf8'))
+                    })
+                } else {
+                    package_result(e, src.toString('utf8'))
+                }
             })
         }
     }
