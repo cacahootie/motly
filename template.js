@@ -202,7 +202,6 @@ exports.NewEngine = function (app) {
         }
 
         router.get('/:branch' + route, handler)
-        router.get(route, handler)
     }
 
     return self;

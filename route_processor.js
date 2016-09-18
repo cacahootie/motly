@@ -24,38 +24,51 @@ exports.NewProcessor = function(app) {
         }
     }
 
+    var StaticRedirect = function(user) {
+        return function(req, res) {
+            res.redirect(env.static_base + user + req.url)
+        }
+    }
+
     var RoutesFromConfig = function(repo, prefix, config) {
         var router = express.Router({strict: true})
         if (env.local) {
             app.use("/", router)
+            app.use("/static", express.static(path.join(env.project_dir, 'static')))
         }
         app.use("/" + prefix, router)
         for (var route in config) {
             if (!config.hasOwnProperty(route)) continue
-            console.log("Initializing route: /" + prefix + route)
-            if (config[route].context) {
-                console.log("Route context from: " + config[route].context.url + "\n")
+            if (prefix) {
+                console.log("\nInitializing route: /" + prefix + route)
+            } else {
+                console.log("\nInitializing route: " + route)
+            }
+            if (config[route].context && config[route].context.url) {
+                console.log("Route context from: " + config[route].context.url)
             }
             env.templater.GetHandler(config, repo, route, router)
         }
     }
 
     var RoutesFromRepo = function(user, repo) {
-        console.log("\nInitializing routes from repo: " + repo + "\n")
+        console.log("\nInitializing routes from repo: " + repo)
         var prefix = repo,
             gh_repo = env.git.getRepo(user, repo);
         env.templater.GetSource(gh_repo, 'config.json', function(e, d) {
             RoutesFromConfig(gh_repo, prefix, d)
         });
+        app.get('/:repo/:branch/static/*', StaticRedirect(user))
     }
 
     var local_routes = function () {
-        console.log("\nInitializing routes from local\n")
+        console.log("\nInitializing routes from local")
         var config = self.get_local_json('config.json')
         RoutesFromConfig(false, false, config)
     }
 
     var git_routes = function () {
+
         var whitelist_repo = env.git.getRepo(
             env.whitelist_gh_user, env.whitelist_gh_repo
         )
