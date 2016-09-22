@@ -10,32 +10,26 @@ var request = require('superagent')
 
 nunjucks.configure({ autoescape: true })
 
-var get_github_source = function(env, user, repo, branch, name, cb) {
+
+var get_github_base = function(env, user, repo, branch, name, cb, attr) {
     var url = env.static_base + user + "/" + repo + "/" + branch + "/" + name,
         r = request.get(url)
-    
+
     console.log("Getting " + url)
     r.end(function(e,d) {
-        if (d && d.text) {
-            return cb(e, d.text)
+        if (d && d[attr]) {
+            return cb(e, d[attr])
         }
         return cb(new Error("no data"), null)
     })
 }
 
+var get_github_source = function(env, user, repo, branch, name, cb) {
+    return get_github_base(env, user, repo, branch, name, cb, 'text')
+}
+
 var get_github_json = function(env, user, repo, branch, name, cb) {
-    var url = env.static_base + user + "/" + repo + "/" + branch + "/" + name,
-        r = request.get(url)
-    
-    console.log("Getting " + url)
-    r.end(function(e,d) {
-        if (typeof(d) === 'undefined') {
-            return cb(new Error("no data"), null)
-        }
-        if (d.body && d.body != {}) {
-            return cb(e, d.body)
-        }
-    })
+    return get_github_base(env, user, repo, branch, name, cb, 'body')
 }
 
 var GitLoader = nunjucks.Loader.extend({

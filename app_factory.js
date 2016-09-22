@@ -15,7 +15,6 @@ exports.get_instance = function(project_dir) {
     app.env = env
 
     env.route_processor = route_processor.NewProcessor(app)
-    app.__githubtoken = process.env.githubtoken || env.route_processor.get_local_text('.github_token')
     env.templater = template.NewEngine(app)
 
     var embed_router = express.Router()
