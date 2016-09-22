@@ -30,33 +30,31 @@ exports.NewProcessor = function(app) {
         }
     }
 
-    var RoutesFromConfig = function(repo, prefix, config) {
+    var RoutesFromConfig = function(user, repo, config) {
         var router = express.Router({strict: true})
         if (env.local) {
             app.use("/", router)
             app.use("/static", express.static(path.join(env.project_dir, 'static')))
         }
-        app.use("/" + prefix, router)
+        app.use("/" + repo, router)
         for (var route in config) {
             if (!config.hasOwnProperty(route)) continue
-            if (prefix) {
-                console.log("\nInitializing route: /" + prefix + route)
+            if (repo) {
+                console.log("\nInitializing route: /" + repo + route)
             } else {
                 console.log("\nInitializing route: " + route)
             }
             if (config[route].context && config[route].context.url) {
                 console.log("Route context from: " + config[route].context.url)
             }
-            env.templater.GetHandler(config, repo, route, router)
+            env.templater.GetHandler(config, user, repo, route, router)
         }
     }
 
     var RoutesFromRepo = function(user, repo) {
         console.log("\nInitializing routes from repo: " + repo)
-        var prefix = repo,
-            gh_repo = env.git.getRepo(user, repo);
-        env.templater.GetSource(gh_repo, 'config.json', function(e, d) {
-            RoutesFromConfig(gh_repo, prefix, d)
+        env.templater.GetJson(user, repo, 'master', 'config.json', function(e, d) {
+            RoutesFromConfig(user, repo, d)
         });
         app.get('/:repo/:branch/static/*', StaticRedirect(user))
     }
@@ -68,12 +66,10 @@ exports.NewProcessor = function(app) {
     }
 
     var git_routes = function () {
-
-        var whitelist_repo = env.git.getRepo(
-            env.whitelist_gh_user, env.whitelist_gh_repo
-        )
-        env.templater.GetSource(
-            whitelist_repo,
+        env.templater.GetJson(
+            env.whitelist_gh_user,
+            env.whitelist_gh_repo,
+            'master',
             "whitelist.json",
             function (e, whitelist) {
                 if (e) return console.log(e)

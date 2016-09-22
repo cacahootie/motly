@@ -4,28 +4,55 @@ var path = require('path')
 var urllib = require('url')
 
 var cache = require('memory-cache')
-var github = require("github-api")
 var nunjucks = require("nunjucks")
 var parallel = require('run-parallel')
 var request = require('superagent')
 
 nunjucks.configure({ autoescape: true })
 
+var get_github_source = function(env, user, repo, branch, name, cb) {
+    var url = env.static_base + user + "/" + repo + "/" + branch + "/" + name,
+        r = request.get(url)
+    
+    console.log("Getting " + url)
+    r.end(function(e,d) {
+        if (d && d.text) {
+            return cb(e, d.text)
+        }
+        return cb(new Error("no data"), null)
+    })
+}
+
+var get_github_json = function(env, user, repo, branch, name, cb) {
+    var url = env.static_base + user + "/" + repo + "/" + branch + "/" + name,
+        r = request.get(url)
+    
+    console.log("Getting " + url)
+    r.end(function(e,d) {
+        if (typeof(d) === 'undefined') {
+            return cb(new Error("no data"), null)
+        }
+        if (d.body && d.body != {}) {
+            return cb(e, d.body)
+        }
+    })
+}
+
 var GitLoader = nunjucks.Loader.extend({
     async: true,
 
-    init: function(env, repo, branch) {
+    init: function(env, user, repo, branch) {
+        this.user = user
         this.repo = repo
         this.env = env
         this.branch = branch || 'master'
     },
 
     getSource: function(name, cb) {
-        var getContents = function(repo, branch, name, cb) {
-            repo.getContents(branch, name, 'raw', cb)
-        }
-
-        var env = this.env,
+        var user = this.user,
+            repo = this.repo,
+            branch = this.branch,
+            env = this.env,
             noCache = env.NOCACHE
 
         function package_result(e, src) {
@@ -39,9 +66,9 @@ var GitLoader = nunjucks.Loader.extend({
         if (env.github) {
             var branch = this.branch
             console.log("Getting source for: " + name)
-            getContents(this.repo, branch, name, function(e,src) {
+            get_github_source(env, user, repo, branch, name, function(e,src) {
                 if (e) {
-                    return getContents(env.base_repo, 'master', name, function (e, src) {
+                    return get_github_source(env, env.base_user, env.base_repo_name, 'master', name, function (e, src) {
                         console.log("Got source from base for: " + name)
                         package_result(e, src)
                     })
@@ -69,11 +96,11 @@ exports.NewEngine = function (app) {
         env = app.env,
         nuns = {}
 
-    function get_nunenv(repo, branch) {
-        var key = repo.__fullname + ":" + branch
+    function get_nunenv(user, repo, branch) {
+        var key = user + ':' + repo + ":" + branch
         if (!nuns[key]) {
             nuns[key] = new nunjucks.Environment(
-                new GitLoader(env, repo, branch)
+                new GitLoader(env, user, repo, branch)
             )
         }
         return nuns[key]
@@ -165,9 +192,9 @@ exports.NewEngine = function (app) {
         return res.json(embed)
     }
 
-    function render(repo, cfg, context, res, req) {
+    function render(user, repo, cfg, context, res, req) {
         context.req = req
-        get_nunenv(repo, req.params.branch).render(
+        get_nunenv(user, repo, req.params.branch).render(
             req.query.format == 'json' && cfg.embed && cfg.embed.template ? 
                 cfg.embed.template : cfg.template,
             context,
@@ -179,12 +206,17 @@ exports.NewEngine = function (app) {
         )
     }
 
-    self.GetSource = function(repo, name, cb) {
+    self.GetSource = function(user, repo, branch, name, cb) {
         console.log("Getting: " + name)
-        return repo.getContents('master', name, 'raw', cb)
+        return get_github_source(env, user, repo, branch, name, cb)
     }
 
-    self.GetHandler = function(config, repo, route, router) {
+    self.GetJson = function(user, repo, branch, name, cb) {
+        console.log("Getting: " + name)
+        return get_github_json(env, user, repo, branch, name, cb)
+    }
+
+    self.GetHandler = function(config, user, repo, route, router) {
         var handler = function(req, res) {
             if (config[route].ttl) {
                 var cresult = cache.get(req.url)
@@ -197,7 +229,7 @@ exports.NewEngine = function (app) {
             robj.req = req
             req.queryString = urllib.parse(req.url).query
             get_context_data(robj, function(e, d) {
-                render(repo, config[route], d, res, req)
+                render(user, repo, config[route], d, res, req)
             })
         }
 
