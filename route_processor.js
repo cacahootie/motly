@@ -28,11 +28,12 @@ exports.NewProcessor = function(app) {
         var router = express.Router({strict: true})
         if (env.local) {
             var static_path = path.join(env.project_dir, 'static')
+            app.use("/", router)
             app.use("/static", express.static(static_path))
             console.log("Static set up to " + static_path)
-            app.use("/", router)
+        } else {
+            app.use("/" + user + '/' + repo, router)
         }
-        app.use("/" + user + '/' + repo, router)
         for (var route in config) {
             if (!config.hasOwnProperty(route)) continue
             if (repo) {

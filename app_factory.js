@@ -33,7 +33,7 @@ exports.get_instance = function(project_dir) {
         res.status(500).send('Something broke!')
     })
     app.use(morgan('combined'))
-    
+
     return app
 }
 

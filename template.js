@@ -227,7 +227,11 @@ exports.NewEngine = function (app) {
             })
         }
 
-        router.get('/:branch' + route, handler)
+        if (env.local) {
+            router.get(route, handler)
+        } else {
+            router.get('/:branch' + route, handler)
+        }
     }
 
     return self;
