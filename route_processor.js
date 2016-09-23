@@ -24,19 +24,15 @@ exports.NewProcessor = function(app) {
         }
     }
 
-    var StaticRedirect = function(user) {
-        return function(req, res) {
-            res.redirect(env.static_base + user + req.url)
-        }
-    }
-
     var RoutesFromConfig = function(user, repo, config) {
         var router = express.Router({strict: true})
         if (env.local) {
+            var static_path = path.join(env.project_dir, 'static')
+            app.use("/static", express.static(static_path))
+            console.log("Static set up to " + static_path)
             app.use("/", router)
-            app.use("/static", express.static(path.join(env.project_dir, 'static')))
         }
-        app.use("/" + repo, router)
+        app.use("/" + user + '/' + repo, router)
         for (var route in config) {
             if (!config.hasOwnProperty(route)) continue
             if (repo) {
@@ -56,7 +52,9 @@ exports.NewProcessor = function(app) {
         env.templater.GetJson(user, repo, 'master', 'config.json', function(e, d) {
             RoutesFromConfig(user, repo, d)
         });
-        app.get('/:repo/:branch/static/*', StaticRedirect(user))
+        app.get('/:user/:repo/:branch/static/*', function(req, res) {
+            res.redirect(env.static_base + req.url)
+        })
     }
 
     var local_routes = function () {

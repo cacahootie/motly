@@ -12,7 +12,7 @@ nunjucks.configure({ autoescape: true })
 
 
 var get_github_base = function(env, user, repo, branch, name, cb, attr) {
-    var url = env.static_base + user + "/" + repo + "/" + branch + "/" + name,
+    var url = env.static_base + "/" + user + "/" + repo + "/" + branch + "/" + name,
         r = request.get(url)
 
     console.log("Getting " + url)
