@@ -133,12 +133,14 @@ exports.NewEngine = function (app) {
             if (typeof(d) === 'undefined') {
                 return cb(new Error("no data"), null)
             }
-            if (d.body[0]) {
+            if (d.type == 'text/html') {
+                return cb(e, d.text)
+            } else if (d.body[0]) {
                 var results = {"items": d.body}
                 cache.put(url, results, 1000 * 60)
                 return cb(e, results)
             }
-            if (robj.ttl) cache.put(url, d.body, robj.ttl)
+            // if (robj.ttl) cache.put(url, d.body, robj.ttl)
             return cb(e, d.body)
         })
     }
