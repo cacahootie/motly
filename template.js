@@ -158,6 +158,7 @@ exports.NewEngine = function (app) {
         var pobj = {}
         for (var r in robj) {
             if (r == 'req') continue
+            robj[r].req = robj.req
             pobj[r] = request_closure(robj[r])
         }
         parallel(pobj, function(e, results) {
