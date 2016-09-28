@@ -125,10 +125,14 @@ exports.NewEngine = function (app) {
             if (cresult) return cb(null, cresult)
         }
         console.log('getting: ' + url)
+        if (env.NOCACHE) {
+            url += '?cachebuster=' + Date.now()
+        }
         var r = request[robj.method || 'get'](url)
         if (robj.method == 'post') {
             r.send(render_object(robj))
         }
+
         r.end(function(e,d) {
             if (typeof(d) === 'undefined') {
                 return cb(new Error("no data"), null)
