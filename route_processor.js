@@ -54,7 +54,7 @@ exports.NewProcessor = function(app) {
             RoutesFromConfig(user, repo, d)
         });
         app.get('/:user/:repo/:branch/static/*', function(req, res) {
-            res.redirect(env.static_base + req.url)
+            res.redirect(env.public_static_base + req.url)
         })
     }
 
