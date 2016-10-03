@@ -195,6 +195,11 @@ exports.NewEngine = function (app) {
 
     function render(user, repo, cfg, context, res, req) {
         context.req = req
+        if (env.local) {
+            context.static_base = ""
+        } else {
+            context.static_base = env.public_static_base + "/" + user + "/" + repo + "/" + req.params.branch + "/"
+        }
         get_nunenv(user, repo, req.params.branch).render(
             req.query.format == 'json' && cfg.embed && cfg.embed.template ? 
                 cfg.embed.template : cfg.template,
