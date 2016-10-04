@@ -2,7 +2,7 @@
 var assert = require('chai').assert,
     contextLib = require('../lib/context')
 
-var rawgit = 'http://motly-static.development.gannettdigital.com/cacahootie/motly-demo/master/static/'
+var rawgit = 'http://rawgit.com/cacahootie/motly-demo/master/static/'
 
 describe('Single URL', function() {
     it('loads data from a single URL', function(done) {
