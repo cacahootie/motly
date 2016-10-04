@@ -1,0 +1,59 @@
+
+var assert = require('chai').assert,
+    contextLib = require('../lib/context')
+
+var rawgit = 'http://motly-static.development.gannettdigital.com/cacahootie/motly-demo/master/static/'
+
+describe('Single URL', function() {
+    it('loads data from a single URL', function(done) {
+        var robj = {
+            "url": rawgit + 'test.json'
+        }
+        contextLib.getContext(robj, function (e, result) {
+            assert.equal(result.bob, "dole")
+            done()
+        })
+    });
+});
+
+describe('Multiple URL, non-nested', function() {
+    it('loads data from multiple non-nested URLs', function(done) {
+        var robj = {
+            "first":{
+                "url": rawgit + 'test.json'    
+            },
+            "second":{
+                "url": rawgit + 'test.json'    
+            }
+        }
+        contextLib.getContext(robj, function (e, result) {
+            assert.equal(result.first.bob, "dole")
+            assert.equal(result.second.bob, "dole")
+            done()
+        })
+    });
+});
+
+describe('Multiple URL, nested', function() {
+    it('loads data from multiple nested URLs', function(done) {
+        var robj = {
+            "first":{
+                "inner": {
+                    "url": rawgit + 'test.json'    
+                }
+            },
+            "second":{
+                "inner": {
+                    "url": rawgit + 'test.json'    
+                }
+            },
+        }
+        contextLib.getContext(robj, function (e, result) {
+            console.log(result)
+            assert.equal(result.first.inner.bob, "dole")
+            assert.equal(result.second.inner.bob, "dole")
+            done()
+        })
+    });
+});
+

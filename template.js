@@ -3,10 +3,9 @@ var fs = require('fs')
 var path = require('path')
 var urllib = require('url')
 
-var cache = require('memory-cache')
 var nunjucks = require("nunjucks")
-var parallel = require('run-parallel')
-var request = require('superagent')
+
+var context = require("./lib/context")
 
 nunjucks.configure({ autoescape: true })
 
@@ -118,58 +117,6 @@ exports.NewEngine = function (app) {
         return eachRecursive(obj, robj)
     }
 
-    function do_request(robj, cb) {
-        var url = nunjucks.renderString(robj.url, robj)
-        var cresult = cache.get(url)
-        if (robj.ttl) {
-            if (cresult) return cb(null, cresult)
-        }
-        console.log('getting: ' + url)
-        if (env.NOCACHE) {
-            url += '?cachebuster=' + Date.now()
-        }
-        var r = request[robj.method || 'get'](url)
-        if (robj.method == 'post') {
-            r.send(render_object(robj))
-        }
-
-        r.end(function(e,d) {
-            if (typeof(d) === 'undefined') {
-                return cb(new Error("no data"), null)
-            }
-            if (d.type == 'text/html') {
-                return cb(e, d.text)
-            } else if (d.body[0]) {
-                var results = {"items": d.body}
-                cache.put(url, results, 1000 * 60)
-                return cb(e, results)
-            }
-            // if (robj.ttl) cache.put(url, d.body, robj.ttl)
-            return cb(e, d.body)
-        })
-    }
-
-    function request_closure(robj) {
-        return function(c) {
-            do_request(robj,c)
-        }
-    }
-
-    function get_context_data(robj, cb) {
-        if (robj.url) {
-            return do_request(robj, cb)
-        }
-        var pobj = {}
-        for (var r in robj) {
-            if (r == 'req') continue
-            robj[r].req = robj.req
-            pobj[r] = request_closure(robj[r])
-        }
-        parallel(pobj, function(e, results) {
-            return cb(e, results)
-        })
-    }
-
     function render_embed(cfg, res, d) {
         var embed = {
             "version": "1.0",
@@ -234,7 +181,7 @@ exports.NewEngine = function (app) {
             }
             robj.req = req
             req.queryString = urllib.parse(req.url).query
-            get_context_data(robj, function(e, d) {
+            context.getContext(robj, function(e, d) {
                 render(user, repo, config[route], d, res, req)
             })
         }
