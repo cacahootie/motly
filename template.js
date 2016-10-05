@@ -4,6 +4,7 @@ var path = require('path')
 var urllib = require('url')
 
 var nunjucks = require("nunjucks")
+var request = require("superagent")
 
 var context = require("./lib/context")
 
