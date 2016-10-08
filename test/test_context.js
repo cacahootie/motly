@@ -9,7 +9,7 @@ describe('Single URL', function() {
         var robj = {
             "url": rawgit + 'test.json'
         }
-        contextLib.getContext(robj, function (e, result) {
+        contextLib.getContext(null, robj, function (e, result) {
             assert.equal(result.bob, "dole")
             done()
         })
@@ -26,7 +26,7 @@ describe('Multiple URL, non-nested', function() {
                 "url": rawgit + 'test.json'    
             }
         }
-        contextLib.getContext(robj, function (e, result) {
+        contextLib.getContext(null, robj, function (e, result) {
             assert.equal(result.first.bob, "dole")
             assert.equal(result.second.bob, "dole")
             done()
@@ -48,7 +48,7 @@ describe('Multiple URL, nested', function() {
                 }
             },
         }
-        contextLib.getContext(robj, function (e, result) {
+        contextLib.getContext(null, robj, function (e, result) {
             console.log(result)
             assert.equal(result.first.inner.bob, "dole")
             assert.equal(result.second.inner.bob, "dole")

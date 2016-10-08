@@ -182,7 +182,7 @@ exports.NewEngine = function (app) {
             }
             robj.req = req
             req.queryString = urllib.parse(req.url).query
-            context.getContext(robj, function(e, d) {
+            context.getContext(env, robj, function(e, d) {
                 render(user, repo, config[route], d, res, req)
             })
         }
