@@ -1,5 +1,9 @@
 #!/usr/bin/env node
 
+try {
+    require('newrelic')
+} catch (e) {}
+
 var githubhook = require('githubhook')
 var app = require('./app_factory')
 
