@@ -1,0 +1,154 @@
+GET /select/world/cities
+accept-encoding: gzip, deflate
+
+HTTP/1.1 200 OK
+server: nginx/1.4.6 (Ubuntu)
+date: Fri, 14 Oct 2016 11:07:19 GMT
+content-type: application/json
+content-length: 2995
+connection: close
+
+{
+  "results": [
+    {
+      "countrycode": "DEU", 
+      "district": "Nordrhein-Westfalen", 
+      "id": 3097, 
+      "name": "Aachen", 
+      "population": 243825
+    }, 
+    {
+      "countrycode": "DNK", 
+      "district": "Nordjylland", 
+      "id": 3318, 
+      "name": "Aalborg", 
+      "population": 161161
+    }, 
+    {
+      "countrycode": "NGA", 
+      "district": "Imo & Abia", 
+      "id": 2760, 
+      "name": "Aba", 
+      "population": 298900
+    }, 
+    {
+      "countrycode": "IRN", 
+      "district": "Khuzestan", 
+      "id": 1404, 
+      "name": "Abadan", 
+      "population": 206073
+    }, 
+    {
+      "countrycode": "BRA", 
+      "district": "Par\u00e1", 
+      "id": 395, 
+      "name": "Abaetetuba", 
+      "population": 111258
+    }, 
+    {
+      "countrycode": "RUS", 
+      "district": "Hakassia", 
+      "id": 3683, 
+      "name": "Abakan", 
+      "population": 169200
+    }, 
+    {
+      "countrycode": "CAN", 
+      "district": "British Colombia", 
+      "id": 1849, 
+      "name": "Abbotsford", 
+      "population": 105403
+    }, 
+    {
+      "countrycode": "NGA", 
+      "district": "Ogun", 
+      "id": 2747, 
+      "name": "Abeokuta", 
+      "population": 427400
+    }, 
+    {
+      "countrycode": "GBR", 
+      "district": "Scotland", 
+      "id": 478, 
+      "name": "Aberdeen", 
+      "population": 213070
+    }, 
+    {
+      "countrycode": "SAU", 
+      "district": "Asir", 
+      "id": 3191, 
+      "name": "Abha", 
+      "population": 112300
+    }, 
+    {
+      "countrycode": "CIV", 
+      "district": "Abidjan", 
+      "id": 2812, 
+      "name": "Abidjan", 
+      "population": 2500000
+    }, 
+    {
+      "countrycode": "JPN", 
+      "district": "Chiba", 
+      "id": 1703, 
+      "name": "Abiko", 
+      "population": 126670
+    }, 
+    {
+      "countrycode": "USA", 
+      "district": "Texas", 
+      "id": 3989, 
+      "name": "Abilene", 
+      "population": 115930
+    }, 
+    {
+      "countrycode": "IND", 
+      "district": "Punjab", 
+      "id": 1309, 
+      "name": "Abohar", 
+      "population": 107163
+    }, 
+    {
+      "countrycode": "PAK", 
+      "district": "Nothwest Border Prov", 
+      "id": 2866, 
+      "name": "Abottabad", 
+      "population": 106000
+    }, 
+    {
+      "countrycode": "ARE", 
+      "district": "Abu Dhabi", 
+      "id": 65, 
+      "name": "Abu Dhabi", 
+      "population": 398695
+    }, 
+    {
+      "countrycode": "NGA", 
+      "district": "Federal Capital Dist", 
+      "id": 2754, 
+      "name": "Abuja", 
+      "population": 350100
+    }, 
+    {
+      "countrycode": "MEX", 
+      "district": "Guanajuato", 
+      "id": 2655, 
+      "name": "Ac\u00e1mbaro", 
+      "population": 110487
+    }, 
+    {
+      "countrycode": "MEX", 
+      "district": "Guerrero", 
+      "id": 2528, 
+      "name": "Acapulco de Ju\u00e1rez", 
+      "population": 721011
+    }, 
+    {
+      "countrycode": "VEN", 
+      "district": "Portuguesa", 
+      "id": 3561, 
+      "name": "Acarigua", 
+      "population": 158954
+    }
+  ]
+}

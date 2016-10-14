@@ -11,8 +11,9 @@ exports.NewProcessor = function(app) {
     var basefolder = env.project_dir || ''
 
     self.get_local_json = function(fname) {
+        fname = path.join(basefolder, fname)
         return JSON.parse(
-            fs.readFileSync(path.join(basefolder, fname)).toString()
+            fs.readFileSync(fname).toString()
         )
     }
 
@@ -26,6 +27,9 @@ exports.NewProcessor = function(app) {
 
     var RoutesFromConfig = function(user, repo, config) {
         var router = express.Router({strict: true})
+        router.get('/favicon.ico', function(req, res) {
+            res.status(404).send("Ain't here")
+        })
         if (env.local) {
             var static_path = path.join(env.project_dir, 'static')
             app.use("/", router)

@@ -8,8 +8,9 @@ exports.get_env = function (project_dir) {
         'whitelist_gh_user': process.env.GH_USER || 'cacahootie',
         'whitelist_gh_repo': process.env.GH_REPO || 'motly-test',
         'NOCACHE': process.env.NOCACHE,
-        'static_base': process.env.STATIC_BASE || 'https://rawgit.com/',
-        'public_static_base': process.env.PUBLIC_STATIC_BASE || process.env.STATIC_BASE || 'https://rawgit.com/'
+        'static_base': process.env.STATIC_BASE || 'https://rawgit.com',
+        'public_static_base': process.env.PUBLIC_STATIC_BASE || process.env.STATIC_BASE || 'https://rawgit.com',
+        'version': require("./package.json").version
     }
     if (process.env.GH_REPO) {
         cfg.github = true

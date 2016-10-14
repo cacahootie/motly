@@ -1,6 +1,7 @@
 
 var assert = require('chai').assert,
-    contextLib = require('../lib/context')
+    contextLib = require('../lib/context'),
+    replay = require('replay')
 
 var rawgit = 'http://rawgit.com/cacahootie/motly-demo/master/static/'
 

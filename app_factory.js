@@ -25,6 +25,9 @@ exports.get_instance = function(project_dir) {
         return app.handle(req, res)
     })
     app.use('/', embed_router)
+    app.get('/status', function(req, res) {
+        res.end(env.version)
+    })
 
     env.route_processor.Routes()
 

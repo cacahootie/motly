@@ -153,7 +153,6 @@ exports.NewEngine = function (app) {
                 cfg.embed.template : cfg.template,
             context,
             function (e,d) {
-                if (cfg.ttl) cache.put(req.url, d, cfg.ttl)
                 if (req.query.format == 'json') return render_embed(cfg, res, d)
                 else return res.end(d)
             }
@@ -172,10 +171,6 @@ exports.NewEngine = function (app) {
 
     self.GetHandler = function(config, user, repo, route, router) {
         var handler = function(req, res) {
-            if (config[route].ttl) {
-                var cresult = cache.get(req.url)
-                if (cresult) return res.end(cresult)
-            }
             var robj = {}
             if (config[route].context) {
                 robj = JSON.parse(JSON.stringify(config[route].context))
@@ -183,6 +178,9 @@ exports.NewEngine = function (app) {
             robj.req = req
             req.queryString = urllib.parse(req.url).query
             context.getContext(env, robj, function(e, d) {
+                if (e) {
+                    throw e
+                }
                 render(user, repo, config[route], d, res, req)
             })
         }
