@@ -179,7 +179,7 @@ exports.NewEngine = function (app) {
             req.queryString = urllib.parse(req.url).query
             context.getContext(env, robj, function(e, d) {
                 if (e) {
-                    throw e
+                    console.error(e)
                 }
                 render(user, repo, config[route], d, res, req)
             })
