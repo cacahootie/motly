@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 try {
-    require('newrelic')
+    require('newrelic') // load new relic if it's there
 } catch (e) {}
 
 var githubhook = require('githubhook')

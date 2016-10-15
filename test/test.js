@@ -11,10 +11,19 @@ function hasCities(res) {
 }
 
 describe('GET /cities', function() {
-  it('respond with text', function(done) {
+  it('loads a simple template with context', function(done) {
     request(app)
       .get('/cities')
       .expect(hasCities)
-      .expect(200, done);
-  });
-});
+      .expect(200, done)
+  })
+})
+
+describe('oembed', function() {
+  it('puts the oembed in the json', function(done) {
+    request(app)
+      .get('/oembed/api?url=localhost:8000/cities')
+      .expect(hasCities)
+      .expect(200, done)
+  })
+})
