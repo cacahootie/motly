@@ -4,25 +4,19 @@ const assert = require('chai').assert,
       request = require('supertest'),
       replay = require('replay')
 
-const app = require('../app_factory').get_instance('../motly-test')
+const helpers = require('./helpers')
 
-app.env.NOCACHE = false
-
-function hasCities(res) {
-    if (res.body.html) {
-        assert(res.body.html.includes('Aachen'), 'Context data not included')
-    } else {
-        assert(res.text.includes('Aachen'), 'Context data not included')
-    }
-}
-
-function hasOembedProps(res) {
-    assert(res.body.width, "Oembed doesn't have width property")
-    assert(res.body.html, "Oembed doesn't have html property")
-}
+const app_factory = require('../app_factory')
 
 
 describe('local mode', function(){
+    let app
+
+    beforeEach(function() {
+        app = app_factory.get_instance('../motly-test')
+        app.env.NOCACHE = false
+    })
+
     it('registers as local mode', function() {
         assert(app.env.local === true)
     })
@@ -30,7 +24,7 @@ describe('local mode', function(){
         request(app)
             .get('/cities')
             .expect('Content-Type', /html/)
-            .expect(hasCities)
+            .expect(helpers.hasCities)
             .expect(200, done)
     })
     it("doesn't load a github mode URL", function(done) {
@@ -42,12 +36,19 @@ describe('local mode', function(){
 
 
 describe('oembed', function() {
+    let app
+
+    beforeEach(function() {
+        app = app_factory.get_instance('../motly-test')
+        app.env.NOCACHE = false
+    })
+
     it('puts the oembed in the json', function(done) {
         request(app)
             .get('/oembed/api?url=localhost:8000/cities')
             .expect('Content-Type', /json/)
-            .expect(hasCities)
-            .expect(hasOembedProps)
+            .expect(helpers.hasCities)
+            .expect(helpers.hasOembedProps)
             .expect(200, done)
     })
 })

@@ -3,7 +3,7 @@
 const express = require('express')
 
 const template = require('./lib/template'),
-      routes = require('./lib/route_processor'),
+      routes = require('./lib/routes').routes,
       embed = require('./handlers/embed').embed,
       status = require('./handlers/status').status,
       errors = require('./handlers/errors').errors,
@@ -12,13 +12,14 @@ const template = require('./lib/template'),
 
 exports.get_instance = function(project_dir) {
     let app = express()
+    
     app.env = configuration(project_dir),
     app.env.templater = template.NewEngine(app)
 
     embed(app)
     status(app)
     errors(app)
-    routes.NewProcessor(app).Routes()
+    routes(app)
 
     return app
 }

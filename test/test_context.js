@@ -5,7 +5,7 @@ var assert = require('chai').assert,
 
 var rawgit = 'http://rawgit.com/cacahootie/motly-demo/master/static/'
 
-describe('Single URL', function() {
+describe('Context Loader', function() {
     it('loads data from a single URL', function(done) {
         var robj = {
             "url": rawgit + 'test.json'
@@ -14,10 +14,8 @@ describe('Single URL', function() {
             assert.equal(result.bob, "dole")
             done()
         })
-    });
-});
+    })
 
-describe('Multiple URL, non-nested', function() {
     it('loads data from multiple non-nested URLs', function(done) {
         var robj = {
             "first":{
@@ -32,10 +30,8 @@ describe('Multiple URL, non-nested', function() {
             assert.equal(result.second.bob, "dole")
             done()
         })
-    });
-});
+    })
 
-describe('Multiple URL, nested', function() {
     it('loads data from multiple nested URLs', function(done) {
         var robj = {
             "first":{
@@ -55,6 +51,5 @@ describe('Multiple URL, nested', function() {
             assert.equal(result.second.inner.bob, "dole")
             done()
         })
-    });
-});
-
+    })
+})
