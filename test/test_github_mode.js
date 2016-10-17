@@ -31,7 +31,7 @@ describe('github mode', function(){
             .expect(200, done)
     })
 
-    it('loads a simple template with context', function(done) {
+    it('loads a template from a non-master branch', function(done) {
         request(app)
             .get('/cacahootie/motly-demo/demobranch/countries')
             .expect('Content-Type', /html/)
