@@ -46,7 +46,6 @@ describe('Context Loader', function() {
             },
         }
         contextLib.getContext(null, robj, function (e, result) {
-            console.log(result)
             assert.equal(result.first.inner.bob, "dole")
             assert.equal(result.second.inner.bob, "dole")
             done()

@@ -14,8 +14,8 @@ describe('github mode', function(){
     let app
 
     beforeEach(function(done) {
-        app = app_factory.get_instance('github')
-        app.env.NOCACHE = false
+        app = app_factory.get_instance('github', 'testing')
+        app.env.NOCACHE = false // so replay can match URLs
         setTimeout(done, 100) // temporary hack to allow for async routes to load
     })
 
