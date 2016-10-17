@@ -1,6 +1,8 @@
 [![Latest Stable Version](https://img.shields.io/npm/v/motly.svg)](https://www.npmjs.com/package/motly)
 [![License](https://img.shields.io/npm/l/motly.svg)](https://www.npmjs.com/package/motly)
 [![NPM Downloads](https://img.shields.io/npm/dm/motly.svg)](https://www.npmjs.com/package/motly)
+[![Code Climate](https://img.shields.io/codeclimate/github/cacahootie/motly.svg?style=flat-square)](https://codeclimate.com/github/cacahootie/motly)
+
 
 # motly
 templating server which merges web-service json with nunjucks templates.
