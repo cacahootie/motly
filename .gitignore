@@ -34,3 +34,4 @@ node_modules
 
 .github_token
 run
+/coverage
