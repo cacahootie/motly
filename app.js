@@ -1,8 +1,10 @@
 #!/usr/bin/env node
 
 try {
-    require('newrelic') // load new relic if it's there
-} catch (e) {}
+    require('newrelic')
+} catch (e) {
+    // load new relic if it's there
+}
 
 var githubhook = require('githubhook')
 var app = require('./app_factory')
