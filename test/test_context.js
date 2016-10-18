@@ -32,6 +32,17 @@ describe('Context Loader', function() {
         })
     })
 
+    it('loads array data into a results object', function(done) {
+        var robj = {
+            "url": rawgit + 'test_array.json'
+        }
+        contextLib.getContext(null, robj, function (e, d) {
+            assert.equal(d.results[0], "first")
+            assert.equal(d.results[1], "second")
+            done()
+        })
+    })
+
     it('loads data from multiple nested URLs', function(done) {
         var robj = {
             "first":{
