@@ -38,6 +38,14 @@ describe('local mode', function(){
             .expect(200, done)
     })
 
+    it('loads a context json', function(done) {
+        request(app)
+            .get('/cities?context=true')
+            .expect('Content-Type', /json/)
+            .expect(helpers.hasCities)
+            .expect(200, done)
+    })
+
     it("doesn't load a github mode URL", function(done) {
         request(app)
             .get('/cacahootie/motly-demo/master/cities')

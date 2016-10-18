@@ -1,13 +1,15 @@
+'use strict'
 
-var assert = require('chai').assert,
-    contextLib = require('../lib/context'),
-    replay = require('replay')
+const assert = require('chai').assert,
+      contextLib = require('../lib/context'),
+      replay = require('replay')
 
-var rawgit = 'http://rawgit.com/cacahootie/motly-demo/master/static/'
+const rawgit = 'http://rawgit.com/cacahootie/motly-demo/master/static/'
+
 
 describe('Context Loader', function() {
     it('loads data from a single URL', function(done) {
-        var robj = {
+        let robj = {
             "url": rawgit + 'test.json'
         }
         contextLib.getContext(null, robj, function (e, result) {
@@ -17,7 +19,7 @@ describe('Context Loader', function() {
     })
 
     it('loads data from multiple non-nested URLs', function(done) {
-        var robj = {
+        let robj = {
             "first":{
                 "url": rawgit + 'test.json'    
             },
@@ -33,7 +35,7 @@ describe('Context Loader', function() {
     })
 
     it('loads array data into a results object', function(done) {
-        var robj = {
+        let robj = {
             "url": rawgit + 'test_array.json'
         }
         contextLib.getContext(null, robj, function (e, d) {
@@ -44,7 +46,7 @@ describe('Context Loader', function() {
     })
 
     it('loads data from multiple nested URLs', function(done) {
-        var robj = {
+        let robj = {
             "first":{
                 "inner": {
                     "url": rawgit + 'test.json'    

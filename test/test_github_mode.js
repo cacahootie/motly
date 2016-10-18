@@ -31,6 +31,14 @@ describe('github mode', function(){
             .expect(200, done)
     })
 
+    it('loads a context json', function(done) {
+        request(app)
+            .get('/cacahootie/motly-demo/master/cities?context=true')
+            .expect('Content-Type', /json/)
+            .expect(helpers.hasCities)
+            .expect(200, done)
+    })
+
     it('loads a template from a non-master branch', function(done) {
         request(app)
             .get('/cacahootie/motly-demo/demobranch/countries')
