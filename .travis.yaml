@@ -1,0 +1,16 @@
+language: node_js
+sudo: false
+node_js:
+  - "6.6"
+  - "4.1"
+  - "4.0"
+install:
+  - npm install
+script:
+  - npm test
+  - npm run coverage
+after_script:
+  - codeclimate-test-reporter < lcov.info
+addons:
+    code_climate:
+        repo_token: a75a6e90a939f3737e0f4c1d3dbbaf39e6a82cfa5144016fc46726e8c602ba84
