@@ -2,8 +2,7 @@
 
 const assert = require('chai').assert,
       request = require('supertest'),
-      replay = require('replay'),
-      sleep = require('sleep').sleep
+      replay = require('replay')
 
 const helpers = require('./helpers')
 
