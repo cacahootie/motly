@@ -8,7 +8,8 @@ const template = require('./lib/template'),
       status = require('./handlers/status').status,
       errors = require('./handlers/errors').errors,
       configuration = require('./lib/configuration').get_env,
-      log = require('./lib/logger').log
+      log = require('./lib/logger').log,
+      cache = require('./lib/cache').cache
 
 
 exports.get_instance = function(project_dir, NODE_ENV) {
@@ -21,6 +22,7 @@ exports.get_instance = function(project_dir, NODE_ENV) {
     status(app)
     errors(app)
     routes(app)
+    cache(app)
 
     return app
 }
