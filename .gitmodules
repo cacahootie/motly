@@ -1,0 +1,9 @@
+[submodule "test/test_data/motly-base"]
+	path = test/test_data/motly-base
+	url = git@github.com:cacahootie/motly-base.git
+[submodule "test/test_data/motly-demo"]
+	path = test/test_data/motly-demo
+	url = git@github.com:cacahootie/motly-demo.git
+[submodule "test/test_data/motly-test"]
+	path = test/test_data/motly-test
+	url = git@github.com:cacahootie/motly-test.git

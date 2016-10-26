@@ -13,7 +13,7 @@ describe('local mode', function(){
     let app
 
     beforeEach(function() {
-        app = app_factory.get_instance('../motly-test', 'testing')
+        app = app_factory.get_instance('./test/test_data/motly-test', 'testing')
         app.env.NOCACHE = false // so that we can match URLs for replay
     })
 
@@ -58,7 +58,7 @@ describe('oembed', function() {
     let app
 
     beforeEach(function() {
-        app = app_factory.get_instance('../motly-test', 'testing')
+        app = app_factory.get_instance('./test/test_data/motly-test', 'testing')
         app.env.NOCACHE = false
         app.env.NODE_ENV = 'testing' // so we don't log a bunch of stuff
     })
