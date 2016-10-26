@@ -8,11 +8,13 @@ const rawgit = 'http://rawgit.com/cacahootie/motly-demo/master/static/'
 
 
 describe('Context Loader', function() {
+    let app = { env: null }
+    
     it('loads data from a single URL', function(done) {
         let robj = {
             "url": rawgit + 'test.json'
         }
-        contextLib.getContext(null, robj, function (e, result) {
+        contextLib.getContext(app, robj, function (e, result) {
             assert.equal(result.bob, "dole")
             done()
         })
@@ -27,7 +29,7 @@ describe('Context Loader', function() {
                 "url": rawgit + 'test.json'    
             }
         }
-        contextLib.getContext(null, robj, function (e, result) {
+        contextLib.getContext(app, robj, function (e, result) {
             assert.equal(result.first.bob, "dole")
             assert.equal(result.second.bob, "dole")
             done()
@@ -38,7 +40,7 @@ describe('Context Loader', function() {
         let robj = {
             "url": rawgit + 'test_array.json'
         }
-        contextLib.getContext(null, robj, function (e, d) {
+        contextLib.getContext(app, robj, function (e, d) {
             assert.equal(d.results[0], "first")
             assert.equal(d.results[1], "second")
             done()
@@ -58,7 +60,7 @@ describe('Context Loader', function() {
                 }
             },
         }
-        contextLib.getContext(null, robj, function (e, result) {
+        contextLib.getContext(app, robj, function (e, result) {
             assert.equal(result.first.inner.bob, "dole")
             assert.equal(result.second.inner.bob, "dole")
             done()
