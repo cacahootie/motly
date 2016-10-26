@@ -2,6 +2,8 @@
 [![License](https://img.shields.io/npm/l/motly.svg)](https://www.npmjs.com/package/motly)
 [![NPM Downloads](https://img.shields.io/npm/dm/motly.svg)](https://www.npmjs.com/package/motly)
 [![Code Climate](https://img.shields.io/codeclimate/github/cacahootie/motly.svg?style=flat-square)](https://codeclimate.com/github/cacahootie/motly)
+[![Test Coverage](https://codeclimate.com/github/cacahootie/motly/badges/coverage.svg)](https://codeclimate.com/github/cacahootie/motly/coverage)
+[![Build Status](https://travis-ci.org/cacahootie/motly.svg?branch=master)](https://travis-ci.org/cacahootie/motly)
 
 
 # motly
