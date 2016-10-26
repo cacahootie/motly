@@ -1,6 +1,6 @@
 {
   "name": "motly",
-  "version": "1.0.19",
+  "version": "1.0.20",
   "description": "nunjucks template microservice",
   "main": "app.js",
   "scripts": {
